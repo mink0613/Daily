@@ -22,6 +22,8 @@ namespace Daily.ViewModel
 
         private ICommand _addUpdateClick;
 
+        private ICommand _clearClick;
+
         private string _addUpdateText;
 
         private string _date;
@@ -51,7 +53,7 @@ namespace Daily.ViewModel
             }
             set
             {
-                _isAddMode = true;
+                _isAddMode = false;
                 _selectedItem = value;
                 UpdateText();
                 OnPropertyChanged();
@@ -89,6 +91,14 @@ namespace Daily.ViewModel
             get
             {
                 return _addUpdateClick;
+            }
+        }
+
+        public ICommand ClearClick
+        {
+            get
+            {
+                return _clearClick;
             }
         }
 
@@ -154,10 +164,13 @@ namespace Daily.ViewModel
 
             SelectedType = TypeList[0];
 
+            ItemCollection = new ObservableCollection<DailyModel>();
+
             TextBoxInitialize();
             UpdateText();
 
             _addUpdateClick = new RelayCommand((param) => AddUpdate(), true);
+            _clearClick = new RelayCommand((param) => Clear(), true);
         }
 
         private void AddUpdate()
@@ -180,24 +193,28 @@ namespace Daily.ViewModel
 
             ItemCollection.Add(newItem);
 
-            ObservableCollection<DailyModel> temp = new ObservableCollection<DailyModel>();
-            for (int i = 0; i < ItemCollection.Count; i++)
+            ObservableCollection<DailyModel> temp = new ObservableCollection<DailyModel>(ItemCollection.OrderByDescending(x => x.Date));
+            ItemCollection.Clear();
+
+            for (int i = 0; i < temp.Count; i++)
             {
-                temp.Add(ItemCollection[i]);
+                ItemCollection.Add(temp[i]);
             }
 
-            ItemCollection.Clear();
-            ItemCollection = null;
+            TextBoxInitialize();
+            UpdateText();
+        }
 
-            ItemCollection = new ObservableCollection<DailyModel>(temp.OrderByDescending(x => x.Date));
-
+        private void Clear()
+        {
+            _isAddMode = true;
             TextBoxInitialize();
             UpdateText();
         }
 
         private void TextBoxInitialize()
         {
-            _isAddMode = false;
+            _isAddMode = true;
 
             SelectedType = ItemType.Outcome;
             Date = DateTime.Now.ToString("yyyyMMdd");

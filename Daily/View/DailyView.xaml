@@ -29,13 +29,17 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <ListView Grid.Row="0" Grid.ColumnSpan="4">
+        <ListView Grid.Row="0" Grid.ColumnSpan="4" ItemsSource="{Binding ItemCollection}" SelectedItem="{Binding SelectedItem}" FontSize="20" HorizontalContentAlignment="Center">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="지출/소비" Width="150" DisplayMemberBinding="{Binding Type}" />
-                    <GridViewColumn Header="날짜" Width="250" DisplayMemberBinding="{Binding Date}" />
-                    <GridViewColumn Header="항목" Width="400" DisplayMemberBinding="{Binding Name}" />
-                    <GridViewColumn Header="금액" Width="200" DisplayMemberBinding="{Binding Amount}" />
+                    <GridViewColumn Header="지출/소비" Width="150" DisplayMemberBinding="{Binding Type}" >
+                    </GridViewColumn>
+                    <GridViewColumn Header="날짜" Width="250" DisplayMemberBinding="{Binding Date}" >
+                    </GridViewColumn>
+                    <GridViewColumn Header="항목" Width="400" DisplayMemberBinding="{Binding Name}" >
+                    </GridViewColumn>
+                    <GridViewColumn Header="금액" Width="200" DisplayMemberBinding="{Binding Amount}" >
+                    </GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>
@@ -44,12 +48,15 @@
 
         </Button>
 
+        <Button Margin="10" Grid.Row="2" Grid.Column="3" Name="ClearClick" Content="취소" FontSize="20" Command="{Binding ClearClick}" >
+
+        </Button>
 
         <ComboBox Name="TypeComboBox" Margin="10" Grid.Row="4" Grid.Column="0" ItemsSource="{Binding TypeList}" FontSize="20" SelectedItem="{Binding SelectedType}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
         <TextBox Margin="10" Grid.Row="4" Grid.Column="1" Text="{Binding Date}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
 
         </TextBox>
-        <TextBox Margin="10" Grid.Row="4" Grid.Column="2" Text="{Binding PurchaseName}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
+        <TextBox Margin="10" Grid.Row="4" Grid.Column="2" Text="{Binding Name}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
 
         </TextBox>
         <uiLibrary:DigitOnlyTextBox Margin="10" Grid.Row="4" Grid.Column="3" Text="{Binding Amount}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
