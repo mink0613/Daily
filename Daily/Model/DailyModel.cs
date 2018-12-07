@@ -17,6 +17,8 @@ namespace Daily.Model
 
     public class DailyModel
     {
+        private int _id;
+
         private ItemType _type;
 
         private string _name;
@@ -26,6 +28,18 @@ namespace Daily.Model
         private int _amount;
 
         private DailyAccountDB _db = new DailyAccountDB();
+
+        public int ID
+        {
+            get
+            {
+                return _id;
+            }
+            set
+            {
+                _id = value;
+            }
+        }
 
         public ItemType Type
         {
@@ -75,9 +89,14 @@ namespace Daily.Model
             }
         }
 
-        public void PostData()
+        public void AddData()
         {
             _db.PostDailyAccount(_type, _date, _name, _amount);
+        }
+
+        public void DeleteData()
+        {
+            _db.DeleteDailyAccount(_id);
         }
     }
 }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using UILibrary.Base;
 
@@ -24,9 +25,17 @@ namespace Daily.ViewModel
 
         private bool _isAddMode;
 
+        private ICommand _refreshClick;
+
+        private ICommand _deleteClick;
+
         private ICommand _addUpdateClick;
 
         private ICommand _clearClick;
+
+        private string _mondayDate;
+
+        private string _sundayDate;
 
         private string _addUpdateText;
 
@@ -109,6 +118,22 @@ namespace Daily.ViewModel
             }
         }
 
+        public ICommand RefreshClick
+        {
+            get
+            {
+                return _refreshClick;
+            }
+        }
+
+        public ICommand DeleteClick
+        {
+            get
+            {
+                return _deleteClick;
+            }
+        }
+
         public ICommand AddUpdateClick
         {
             get
@@ -122,6 +147,32 @@ namespace Daily.ViewModel
             get
             {
                 return _clearClick;
+            }
+        }
+
+        public string MondayDate
+        {
+            get
+            {
+                return _mondayDate;
+            }
+            set
+            {
+                _mondayDate = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string SundayDate
+        {
+            get
+            {
+                return _sundayDate;
+            }
+            set
+            {
+                _sundayDate = value;
+                OnPropertyChanged();
             }
         }
 
@@ -265,10 +316,15 @@ namespace Daily.ViewModel
             TotalOutcome = 0;
             TotalAmount = 0;
 
+            MondayDate = ToStringDate(GetMondayOfWeek(DateTime.Now));
+            SundayDate = ToStringDate(GetSundayOfWeek(DateTime.Now));
+
             InitializeList();
             TextBoxInitialize();
             UpdateText();
 
+            _refreshClick = new RelayCommand((param) => Refresh(), true);
+            _deleteClick = new RelayCommand((param) => Delete(), true);
             _addUpdateClick = new RelayCommand((param) => AddUpdate(), true);
             _clearClick = new RelayCommand((param) => Clear(), true);
         }
@@ -283,6 +339,7 @@ namespace Daily.ViewModel
 
             try
             {
+                ItemCollection.Clear();
                 var models = JsonConvert.DeserializeObject<List<DailyModel>>(result);
                 foreach(DailyModel model in models)
                 {
@@ -297,6 +354,23 @@ namespace Daily.ViewModel
             }
         }
 
+        private void Refresh()
+        {
+            InitializeList();
+        }
+
+        private void Delete()
+        {
+            if (_isAddMode == false && _selectedItem != null)
+            {
+                if (MessageBox.Show("정말로 지우겠습니까?", "Warning", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                {
+                    _selectedItem.DeleteData();
+                    ItemCollection.Remove(_selectedItem);
+                }
+            }
+        }
+
         private void AddUpdate()
         {
             if (_date.Length == 0 || _name.Length == 0 || _amount.Length == 0)
@@ -304,12 +378,19 @@ namespace Daily.ViewModel
                 return;
             }
 
+            int lastId = 0;
+            if (ItemCollection.Count > 0)
+            {
+                lastId = ItemCollection.OrderByDescending(x => x.ID).First().ID;
+            }
+            
             if (_isAddMode == false)
             {
                 ItemCollection.Remove(_selectedItem);
             }
 
             DailyModel newItem = new DailyModel();
+            newItem.ID = lastId + 1;
             newItem.Type = _selectedType;
             newItem.Date = _date;
             newItem.Name = _name;
@@ -317,7 +398,7 @@ namespace Daily.ViewModel
 
             ItemCollection.Add(newItem);
 
-            newItem.PostData();
+            newItem.AddData();
 
             UpdateListView();
             TextBoxInitialize();
@@ -329,6 +410,8 @@ namespace Daily.ViewModel
             ObservableCollection<DailyModel> temp = new ObservableCollection<DailyModel>(ItemCollection.OrderByDescending(x => x.Date));
             ItemCollection.Clear();
             TotalAmount = 0;
+            TotalOutcome = 0;
+            TotalIncome = 0;
 
             for (int i = 0; i < temp.Count; i++)
             {

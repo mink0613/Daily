@@ -6,7 +6,17 @@ namespace Daily.Common
     {
         private readonly string postUrl = "http://modoocoupon.woobi.co.kr/gnuboard4/daily/php/PostAccount.php";
 
+        private readonly string deleteUrl = "http://modoocoupon.woobi.co.kr/gnuboard4/daily/php/DeleteAccount.php";
+
         private readonly string getWeeklyUrl = "http://modoocoupon.woobi.co.kr/gnuboard4/daily/php/GetWeeklyAccount.php";
+
+        public void DeleteDailyAccount(int id)
+        {
+            string fullUrl = deleteUrl + "?";
+            fullUrl += "id=" + id.ToString();
+
+            Post(fullUrl, "");
+        }
 
         public void PostDailyAccount(ItemType type, string date, string name, int amount)
         {

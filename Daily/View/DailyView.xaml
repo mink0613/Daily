@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:Daily.View"
         xmlns:viewmodel="clr-namespace:Daily.ViewModel"
         xmlns:common="clr-namespace:Daily.Common"
+        xmlns:buttonsLibrary="clr-namespace:UILibrary.Buttons;assembly=UILibrary"
         xmlns:uiLibrary="clr-namespace:UILibrary.TextBoxes;assembly=UILibrary"
         mc:Ignorable="d"
         Title="DailyView" Height="850" Width="1000">
@@ -20,6 +21,7 @@
     </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="0.7*" />
             <RowDefinition Height="4*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
@@ -32,7 +34,18 @@
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <ListView Grid.Row="0" Grid.ColumnSpan="4" ItemsSource="{Binding ItemCollection}" SelectedItem="{Binding SelectedItem}" FontSize="20" HorizontalContentAlignment="Center">
+
+        <TextBlock Grid.Row="0" Grid.Column="0" FontSize="20" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding MondayDate}" />
+
+        <TextBlock Grid.Row="0" Grid.Column="1" FontSize="20" TextAlignment="Center" VerticalAlignment="Center" Text=" ~ " />
+        
+        <TextBlock Grid.Row="0" Grid.Column="2" FontSize="20" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding SundayDate}" />
+
+        <buttonsLibrary:ImageButton Image="/Image/refresh.ico" Margin="10" Grid.Row="0" Grid.Column="4" Height="45" Width="50" HorizontalAlignment="Right" FontSize="20" Command="{Binding RefreshClick}" >
+
+        </buttonsLibrary:ImageButton>
+
+        <ListView Grid.Row="1" Grid.ColumnSpan="4" ItemsSource="{Binding ItemCollection}" SelectedItem="{Binding SelectedItem}" FontSize="20" HorizontalContentAlignment="Center">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="지출/소비" Width="150" >
@@ -67,46 +80,50 @@
             </ListView.View>
         </ListView>
 
-        <TextBlock Margin="10" Grid.Row="1" Grid.Column="0" Text="총 수입" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Margin="10" Grid.Row="2" Grid.Column="0" Text="총 수입" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
 
         </TextBlock>
 
-        <TextBlock Margin="10" Grid.Row="1" Grid.Column="1" Foreground="Blue" Text="{Binding TotalIncome}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
-
-        </TextBlock>
-        
-        <TextBlock Margin="10" Grid.Row="1" Grid.Column="2" Text="총 지출" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
-
-        </TextBlock>
-
-        <TextBlock Margin="10" Grid.Row="1" Grid.Column="3" Foreground="Red" Text="{Binding TotalOutcome}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Margin="10" Grid.Row="2" Grid.Column="1" Foreground="Blue" Text="{Binding TotalIncome}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
 
         </TextBlock>
         
-        <TextBlock Margin="10" Grid.Row="2" Grid.Column="2" Text="총액" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Margin="10" Grid.Row="2" Grid.Column="2" Text="총 지출" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
+
+        </TextBlock>
+
+        <TextBlock Margin="10" Grid.Row="2" Grid.Column="3" Foreground="Red" Text="{Binding TotalOutcome}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
+
+        </TextBlock>
+        
+        <TextBlock Margin="10" Grid.Row="3" Grid.Column="2" Text="총액" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
             
         </TextBlock>
 
-        <TextBlock Margin="10" Grid.Row="2" Grid.Column="3" Foreground="{Binding TotalType, Converter={StaticResource TotalAmountTypeToColorConverter}}" Text="{Binding TotalAmount, Converter={StaticResource AbsoluteValueConverter}}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Margin="10" Grid.Row="3" Grid.Column="3" Foreground="{Binding TotalType, Converter={StaticResource TotalAmountTypeToColorConverter}}" Text="{Binding TotalAmount, Converter={StaticResource AbsoluteValueConverter}}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
 
         </TextBlock>
 
-        <Button Margin="10" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Name="AddClick" Content="{Binding AddUpdateText}" FontSize="20" Command="{Binding AddUpdateClick}" >
+        <Button Margin="10" Grid.Row="4" Grid.Column="0" Name="DeleteClick" Content="삭제" FontSize="20" Command="{Binding DeleteClick}" >
+
+        </Button>
+        
+        <Button Margin="10" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Name="AddClick" Content="{Binding AddUpdateText}" FontSize="20" Command="{Binding AddUpdateClick}" >
 
         </Button>
 
-        <Button Margin="10" Grid.Row="3" Grid.Column="3" Name="ClearClick" Content="취소" FontSize="20" Command="{Binding ClearClick}" >
+        <Button Margin="10" Grid.Row="4" Grid.Column="3" Name="ClearClick" Content="취소" FontSize="20" Command="{Binding ClearClick}" >
 
         </Button>
 
-        <ComboBox Name="TypeComboBox" Margin="10" Grid.Row="4" Grid.Column="0" ItemsSource="{Binding TypeList}" FontSize="20" SelectedItem="{Binding SelectedType}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-        <TextBox Margin="10" Grid.Row="4" Grid.Column="1" Text="{Binding Date}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
+        <ComboBox Name="TypeComboBox" Margin="10" Grid.Row="5" Grid.Column="0" ItemsSource="{Binding TypeList}" FontSize="20" SelectedItem="{Binding SelectedType}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+        <TextBox Margin="10" Grid.Row="5" Grid.Column="1" Text="{Binding Date}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
 
         </TextBox>
-        <TextBox Margin="10" Grid.Row="4" Grid.Column="2" Text="{Binding Name}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
+        <TextBox Margin="10" Grid.Row="5" Grid.Column="2" Text="{Binding Name}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
 
         </TextBox>
-        <uiLibrary:DigitOnlyTextBox Margin="10" Grid.Row="4" Grid.Column="3" Text="{Binding Amount}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
+        <uiLibrary:DigitOnlyTextBox Margin="10" Grid.Row="5" Grid.Column="3" Text="{Binding Amount}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
 
         </uiLibrary:DigitOnlyTextBox>
     </Grid>
