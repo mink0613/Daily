@@ -13,7 +13,15 @@ namespace Daily.Common
             string fullUrl = postUrl + "?";
             fullUrl += "type=" + type.ToString() + "&date=" + date + "&name=" + name + "&amount=" + amount;
 
-            Request(fullUrl, "POST", "");
+            Post(fullUrl, "");
+        }
+
+        public string GetWeeklyAccount(string startDate, string endDate)
+        {
+            string fullUrl = getWeeklyUrl + "?";
+            fullUrl += "searchStartDate=" + startDate + "&searchEndDate=" + endDate;
+
+            return Get(fullUrl);
         }
     }
 }

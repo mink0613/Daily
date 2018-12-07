@@ -1,10 +1,12 @@
-﻿using Daily.Model;
+﻿using Daily.Common;
+using Daily.Model;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Input;
 using UILibrary.Base;
-using System.Linq;
 
 namespace Daily.ViewModel
 {
@@ -169,6 +171,31 @@ namespace Daily.ViewModel
             }
         }
 
+        private DateTime GetMondayOfWeek(DateTime date)
+        {
+            if (date.DayOfWeek != DayOfWeek.Monday)
+            {
+                return GetMondayOfWeek(date.AddDays(-1));
+            }
+
+            return date;
+        }
+
+        private DateTime GetSundayOfWeek(DateTime date)
+        {
+            if (date.DayOfWeek != DayOfWeek.Sunday)
+            {
+                return GetSundayOfWeek(date.AddDays(1));
+            }
+
+            return date;
+        }
+
+        private string ToStringDate(DateTime date)
+        {
+            return date.ToString("yyyy-MM-dd");
+        }
+
         private void Initialize()
         {
             _isAddMode = true;
@@ -182,11 +209,36 @@ namespace Daily.ViewModel
             ItemCollection = new ObservableCollection<DailyModel>();
             TotalAmount = 0;
 
+            InitializeList();
             TextBoxInitialize();
             UpdateText();
 
             _addUpdateClick = new RelayCommand((param) => AddUpdate(), true);
             _clearClick = new RelayCommand((param) => Clear(), true);
+        }
+
+        private void InitializeList()
+        {
+            DailyAccountDB db = new DailyAccountDB();
+            string monday = ToStringDate(GetMondayOfWeek(DateTime.Now));
+            string sunday = ToStringDate(GetSundayOfWeek(DateTime.Now));
+
+            string result = db.GetWeeklyAccount(monday, sunday);
+
+            try
+            {
+                var models = JsonConvert.DeserializeObject<List<DailyModel>>(result);
+                foreach(DailyModel model in models)
+                {
+                    ItemCollection.Add(model);
+                }
+
+                UpdateListView();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
         }
 
         private void AddUpdate()
@@ -209,6 +261,15 @@ namespace Daily.ViewModel
 
             ItemCollection.Add(newItem);
 
+            newItem.PostData();
+
+            UpdateListView();
+            TextBoxInitialize();
+            UpdateText();
+        }
+
+        private void UpdateListView()
+        {
             ObservableCollection<DailyModel> temp = new ObservableCollection<DailyModel>(ItemCollection.OrderByDescending(x => x.Date));
             ItemCollection.Clear();
             TotalAmount = 0;
@@ -225,11 +286,6 @@ namespace Daily.ViewModel
                     TotalAmount += temp[i].Amount;
                 }
             }
-
-            newItem.PostData();
-
-            TextBoxInitialize();
-            UpdateText();
         }
 
         private void Clear()
@@ -245,7 +301,7 @@ namespace Daily.ViewModel
             _isAddMode = true;
 
             SelectedType = ItemType.Outcome;
-            Date = DateTime.Now.ToString("yyyy-MM-dd");
+            Date = ToStringDate(DateTime.Now);
             Name = "";
             Amount = "";
         }
