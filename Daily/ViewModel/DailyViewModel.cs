@@ -357,6 +357,8 @@ namespace Daily.ViewModel
         private void Refresh()
         {
             InitializeList();
+            TextBoxInitialize();
+            UpdateText();
         }
 
         private void Delete()
@@ -367,6 +369,10 @@ namespace Daily.ViewModel
                 {
                     _selectedItem.DeleteData();
                     ItemCollection.Remove(_selectedItem);
+
+                    UpdateListView();
+                    TextBoxInitialize();
+                    UpdateText();
                 }
             }
         }
@@ -377,20 +383,13 @@ namespace Daily.ViewModel
             {
                 return;
             }
-
-            int lastId = 0;
-            if (ItemCollection.Count > 0)
-            {
-                lastId = ItemCollection.OrderByDescending(x => x.ID).First().ID;
-            }
-            
+                        
             if (_isAddMode == false)
             {
                 ItemCollection.Remove(_selectedItem);
             }
 
             DailyModel newItem = new DailyModel();
-            newItem.ID = lastId + 1;
             newItem.Type = _selectedType;
             newItem.Date = _date;
             newItem.Name = _name;
@@ -400,7 +399,7 @@ namespace Daily.ViewModel
 
             newItem.AddData();
 
-            UpdateListView();
+            InitializeList(); // In order to update all the IDs
             TextBoxInitialize();
             UpdateText();
         }

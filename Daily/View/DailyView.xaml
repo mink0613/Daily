@@ -69,7 +69,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="금액" Width="200" >
+                    <GridViewColumn Header="금액" Width="190" >
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock TextAlignment="Center" HorizontalAlignment="Center" Text="{Binding Amount}" Foreground="{Binding Type, Converter={StaticResource ItemTypeToColorConverter}}" />
