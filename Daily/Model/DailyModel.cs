@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Daily.Common;
+using System;
 
 namespace Daily.Model
 {
@@ -17,6 +18,8 @@ namespace Daily.Model
         private string _date;
 
         private int _amount;
+
+        private DailyAccountDB _db = new DailyAccountDB();
 
         public ItemType Type
         {
@@ -64,6 +67,11 @@ namespace Daily.Model
             {
                 _amount = value;
             }
+        }
+
+        public void PostData()
+        {
+            _db.PostDailyAccount(_type, _date, _name, _amount);
         }
     }
 }

@@ -226,6 +226,8 @@ namespace Daily.ViewModel
                 }
             }
 
+            newItem.PostData();
+
             TextBoxInitialize();
             UpdateText();
         }
@@ -243,7 +245,7 @@ namespace Daily.ViewModel
             _isAddMode = true;
 
             SelectedType = ItemType.Outcome;
-            Date = DateTime.Now.ToString("yyyyMMdd");
+            Date = DateTime.Now.ToString("yyyy-MM-dd");
             Name = "";
             Amount = "";
         }
