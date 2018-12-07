@@ -32,6 +32,8 @@ namespace Daily.ViewModel
 
         private string _amount;
 
+        private int _totalAmount;
+
         public ObservableCollection<DailyModel> ItemCollection
         {
             get
@@ -154,6 +156,19 @@ namespace Daily.ViewModel
             }
         }
 
+        public int TotalAmount
+        {
+            get
+            {
+                return _totalAmount;
+            }
+            set
+            {
+                _totalAmount = value;
+                OnPropertyChanged();
+            }
+        }
+
         private void Initialize()
         {
             _isAddMode = true;
@@ -165,6 +180,7 @@ namespace Daily.ViewModel
             SelectedType = TypeList[0];
 
             ItemCollection = new ObservableCollection<DailyModel>();
+            TotalAmount = 0;
 
             TextBoxInitialize();
             UpdateText();
@@ -195,10 +211,19 @@ namespace Daily.ViewModel
 
             ObservableCollection<DailyModel> temp = new ObservableCollection<DailyModel>(ItemCollection.OrderByDescending(x => x.Date));
             ItemCollection.Clear();
+            TotalAmount = 0;
 
             for (int i = 0; i < temp.Count; i++)
             {
                 ItemCollection.Add(temp[i]);
+                if (temp[i].Type == ItemType.Outcome)
+                {
+                    TotalAmount -= temp[i].Amount;
+                }
+                else
+                {
+                    TotalAmount += temp[i].Amount;
+                }
             }
 
             TextBoxInitialize();
@@ -208,6 +233,7 @@ namespace Daily.ViewModel
         private void Clear()
         {
             _isAddMode = true;
+            _selectedItem = null;
             TextBoxInitialize();
             UpdateText();
         }
@@ -231,6 +257,13 @@ namespace Daily.ViewModel
             else
             {
                 AddUpdateText = "업데이트";
+            }
+
+            if (_selectedItem != null)
+            {
+                Date = _selectedItem.Date;
+                Name = _selectedItem.Name;
+                Amount = _selectedItem.Amount.ToString();
             }
         }
 

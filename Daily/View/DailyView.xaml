@@ -5,11 +5,13 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Daily.View"
         xmlns:viewmodel="clr-namespace:Daily.ViewModel"
+        xmlns:common="clr-namespace:Daily.Common"
         xmlns:uiLibrary="clr-namespace:UILibrary.TextBoxes;assembly=UILibrary"
         mc:Ignorable="d"
         Title="DailyView" Height="650" Width="1000">
     <Window.Resources>
         <viewmodel:DailyViewModel x:Key="ViewModel" />
+        <common:ItemTypeToColorConverter x:Key="ItemTypeToColorConverter" />
     </Window.Resources>
     <Window.DataContext>
         <Binding Source="{StaticResource ViewModel}" />
@@ -17,11 +19,9 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="4*" />
-            <RowDefinition Height="0.5*" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="0.5*" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="0.5*" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -32,17 +32,45 @@
         <ListView Grid.Row="0" Grid.ColumnSpan="4" ItemsSource="{Binding ItemCollection}" SelectedItem="{Binding SelectedItem}" FontSize="20" HorizontalContentAlignment="Center">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="지출/소비" Width="150" DisplayMemberBinding="{Binding Type}" >
+                    <GridViewColumn Header="지출/소비" Width="150" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock TextAlignment="Center" HorizontalAlignment="Center" Text="{Binding Type}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="날짜" Width="250" DisplayMemberBinding="{Binding Date}" >
+                    <GridViewColumn Header="날짜" Width="250" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock TextAlignment="Center" HorizontalAlignment="Center" Text="{Binding Date}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="항목" Width="400" DisplayMemberBinding="{Binding Name}" >
+                    <GridViewColumn Header="항목" Width="400" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock TextAlignment="Center" HorizontalAlignment="Center" Text="{Binding Name}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="금액" Width="200" DisplayMemberBinding="{Binding Amount}" >
+                    <GridViewColumn Header="금액" Width="200" >
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock TextAlignment="Center" HorizontalAlignment="Center" Text="{Binding Amount}" Foreground="{Binding Type, Converter={StaticResource ItemTypeToColorConverter}}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                 </GridView>
             </ListView.View>
         </ListView>
+
+        <TextBlock Margin="10" Grid.Row="1" Grid.Column="2" Text="총액" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
+            
+        </TextBlock>
+
+        <TextBlock Margin="10" Grid.Row="1" Grid.Column="3" Foreground="Red" Text="{Binding TotalAmount}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
+
+        </TextBlock>
 
         <Button Margin="10" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Name="AddClick" Content="{Binding AddUpdateText}" FontSize="20" Command="{Binding AddUpdateClick}" >
 
@@ -52,14 +80,14 @@
 
         </Button>
 
-        <ComboBox Name="TypeComboBox" Margin="10" Grid.Row="4" Grid.Column="0" ItemsSource="{Binding TypeList}" FontSize="20" SelectedItem="{Binding SelectedType}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-        <TextBox Margin="10" Grid.Row="4" Grid.Column="1" Text="{Binding Date}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
+        <ComboBox Name="TypeComboBox" Margin="10" Grid.Row="3" Grid.Column="0" ItemsSource="{Binding TypeList}" FontSize="20" SelectedItem="{Binding SelectedType}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+        <TextBox Margin="10" Grid.Row="3" Grid.Column="1" Text="{Binding Date}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
 
         </TextBox>
-        <TextBox Margin="10" Grid.Row="4" Grid.Column="2" Text="{Binding Name}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
+        <TextBox Margin="10" Grid.Row="3" Grid.Column="2" Text="{Binding Name}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
 
         </TextBox>
-        <uiLibrary:DigitOnlyTextBox Margin="10" Grid.Row="4" Grid.Column="3" Text="{Binding Amount}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
+        <uiLibrary:DigitOnlyTextBox Margin="10" Grid.Row="3" Grid.Column="3" Text="{Binding Amount}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
 
         </uiLibrary:DigitOnlyTextBox>
     </Grid>

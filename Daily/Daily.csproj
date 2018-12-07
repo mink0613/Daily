@@ -66,6 +66,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Common\ItemTypeToColorConverter.cs" />
     <Compile Include="Model\DailyModel.cs" />
     <Compile Include="ViewModel\DailyViewModel.cs" />
     <Compile Include="View\DailyView.xaml.cs">
