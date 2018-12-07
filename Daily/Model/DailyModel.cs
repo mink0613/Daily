@@ -9,6 +9,12 @@ namespace Daily.Model
         Income
     }
 
+    public enum TotalAmountType
+    {
+        Plus,
+        Minus
+    }
+
     public class DailyModel
     {
         private ItemType _type;

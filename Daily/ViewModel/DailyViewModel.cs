@@ -20,6 +20,8 @@ namespace Daily.ViewModel
 
         private ItemType _selectedType;
 
+        private TotalAmountType _totalType;
+
         private bool _isAddMode;
 
         private ICommand _addUpdateClick;
@@ -33,6 +35,10 @@ namespace Daily.ViewModel
         private string _name;
 
         private string _amount;
+
+        private int _totalIncome;
+
+        private int _totalOutcome;
 
         private int _totalAmount;
 
@@ -86,6 +92,19 @@ namespace Daily.ViewModel
             set
             {
                 _selectedType = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public TotalAmountType TotalType
+        {
+            get
+            {
+                return _totalType;
+            }
+            set
+            {
+                _totalType = value;
                 OnPropertyChanged();
             }
         }
@@ -158,6 +177,32 @@ namespace Daily.ViewModel
             }
         }
 
+        public int TotalIncome
+        {
+            get
+            {
+                return _totalIncome;
+            }
+            set
+            {
+                _totalIncome = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public int TotalOutcome
+        {
+            get
+            {
+                return _totalOutcome;
+            }
+            set
+            {
+                _totalOutcome = value;
+                OnPropertyChanged();
+            }
+        }
+
         public int TotalAmount
         {
             get
@@ -167,6 +212,15 @@ namespace Daily.ViewModel
             set
             {
                 _totalAmount = value;
+                if (_totalAmount < 0)
+                {
+                    TotalType = TotalAmountType.Minus;
+                }
+                else
+                {
+                    TotalType = TotalAmountType.Plus;
+                }
+
                 OnPropertyChanged();
             }
         }
@@ -207,6 +261,8 @@ namespace Daily.ViewModel
             SelectedType = TypeList[0];
 
             ItemCollection = new ObservableCollection<DailyModel>();
+            TotalIncome = 0;
+            TotalOutcome = 0;
             TotalAmount = 0;
 
             InitializeList();
@@ -279,10 +335,12 @@ namespace Daily.ViewModel
                 ItemCollection.Add(temp[i]);
                 if (temp[i].Type == ItemType.Outcome)
                 {
+                    TotalOutcome += temp[i].Amount;
                     TotalAmount -= temp[i].Amount;
                 }
                 else
                 {
+                    TotalIncome += temp[i].Amount;
                     TotalAmount += temp[i].Amount;
                 }
             }

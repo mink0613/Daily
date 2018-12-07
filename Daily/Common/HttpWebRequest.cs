@@ -40,7 +40,7 @@ namespace Daily.Common
 
             WebResponse response = request.GetResponse();
             Stream respPostStream = response.GetResponseStream();
-            StreamReader readerPost = new StreamReader(respPostStream, Encoding.GetEncoding("EUC-KR"), true);
+            StreamReader readerPost = new StreamReader(respPostStream, Encoding.UTF8, true);
 
             string responseFromServer = readerPost.ReadToEnd();
 

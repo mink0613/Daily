@@ -69,9 +69,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Common\AbsoluteValueConverter.cs" />
     <Compile Include="Common\DailyAccountDB.cs" />
     <Compile Include="Common\HttpWebRequest.cs" />
     <Compile Include="Common\ItemTypeToColorConverter.cs" />
+    <Compile Include="Common\TotalAmountTypeToColorConverter.cs" />
     <Compile Include="Model\DailyModel.cs" />
     <Compile Include="ViewModel\DailyViewModel.cs" />
     <Compile Include="View\DailyView.xaml.cs">

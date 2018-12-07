@@ -1,18 +1,17 @@
 ﻿using Daily.Model;
 using System;
 using System.Globalization;
-using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 
 namespace Daily.Common
 {
-    [ValueConversion(typeof(ItemType), typeof(SolidColorBrush))]
-    public class ItemTypeToColorConverter : IValueConverter
+    [ValueConversion(typeof(TotalAmountType), typeof(SolidColorBrush))]
+    public class TotalAmountTypeToColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if ((ItemType)value == ItemType.Outcome)
+            if ((TotalAmountType)value == TotalAmountType.Minus)
             {
                 return new SolidColorBrush(Colors.Red);
             }
