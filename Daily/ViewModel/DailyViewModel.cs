@@ -394,7 +394,7 @@ namespace Daily.ViewModel
             newItem.Type = _selectedType;
             newItem.Date = _date;
             newItem.Name = _name;
-            newItem.Amount = int.Parse(_amount);
+            newItem.Amount = int.Parse(_amount.Replace(",", ""));
 
             ItemCollection.Add(newItem);
 

@@ -6,15 +6,23 @@
         xmlns:local="clr-namespace:Daily.View"
         xmlns:viewmodel="clr-namespace:Daily.ViewModel"
         xmlns:common="clr-namespace:Daily.Common"
+        xmlns:converterLibrary="clr-namespace:UILibrary.Converters;assembly=UILibrary"
         xmlns:buttonsLibrary="clr-namespace:UILibrary.Buttons;assembly=UILibrary"
         xmlns:uiLibrary="clr-namespace:UILibrary.TextBoxes;assembly=UILibrary"
         mc:Ignorable="d"
-        Title="DailyView" Height="850" Width="1000">
+        WindowStartupLocation="CenterScreen"
+        Title="DailyView" Height="750" Width="1000">
     <Window.Resources>
         <viewmodel:DailyViewModel x:Key="ViewModel" />
         <common:ItemTypeToColorConverter x:Key="ItemTypeToColorConverter" />
+        <common:DecimalConverter x:Key="DecimalConverter" />
         <common:TotalAmountTypeToColorConverter x:Key="TotalAmountTypeToColorConverter" />
         <common:AbsoluteValueConverter x:Key="AbsoluteValueConverter" />
+        <common:AbsoluteDecimalValueConverter x:Key="AbsoluteDecimalValueConverter" />
+        <converterLibrary:WidthConverter x:Key="WidthConverter" />
+        <Style TargetType="ListViewItem">
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
     </Window.Resources>
     <Window.DataContext>
         <Binding Source="{StaticResource ViewModel}" />
@@ -45,13 +53,13 @@
 
         </buttonsLibrary:ImageButton>
 
-        <ListView Grid.Row="1" Grid.ColumnSpan="4" ItemsSource="{Binding ItemCollection}" SelectedItem="{Binding SelectedItem}" FontSize="20" HorizontalContentAlignment="Center">
+        <ListView Name="listView" Grid.Row="1" Grid.ColumnSpan="4" ItemsSource="{Binding ItemCollection}" SelectedItem="{Binding SelectedItem}" FontSize="20" HorizontalContentAlignment="Center">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="지출/소비" Width="150" >
+                    <GridViewColumn Header="지출/소비" Width="150" x:Name="col1">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock TextAlignment="Center" HorizontalAlignment="Center" Text="{Binding Type}" />
+                                <TextBlock Text="{Binding Type}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -62,17 +70,17 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="항목" Width="400" >
+                    <GridViewColumn Header="항목" Width="370">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock TextAlignment="Center" HorizontalAlignment="Center" Text="{Binding Name}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="금액" Width="200" >
+                    <GridViewColumn Header="금액" Width="200" x:Name="AmountTB">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock TextAlignment="Center" HorizontalAlignment="Center" Text="{Binding Amount}" Foreground="{Binding Type, Converter={StaticResource ItemTypeToColorConverter}}" />
+                                <TextBlock TextAlignment="Center" x:Name="AmountTextBlock" HorizontalAlignment="Center" Text="{Binding Amount, Converter={StaticResource DecimalConverter}}" Foreground="{Binding Type, Converter={StaticResource ItemTypeToColorConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -84,7 +92,7 @@
 
         </TextBlock>
 
-        <TextBlock Margin="10" Grid.Row="2" Grid.Column="1" Foreground="Blue" Text="{Binding TotalIncome}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Margin="10" Grid.Row="2" Grid.Column="1" Foreground="Blue" Text="{Binding TotalIncome, Converter={StaticResource DecimalConverter}}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
 
         </TextBlock>
         
@@ -92,7 +100,7 @@
 
         </TextBlock>
 
-        <TextBlock Margin="10" Grid.Row="2" Grid.Column="3" Foreground="Red" Text="{Binding TotalOutcome}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Margin="10" Grid.Row="2" Grid.Column="3" Foreground="Red" Text="{Binding TotalOutcome, Converter={StaticResource DecimalConverter}}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
 
         </TextBlock>
         
@@ -100,7 +108,7 @@
             
         </TextBlock>
 
-        <TextBlock Margin="10" Grid.Row="3" Grid.Column="3" Foreground="{Binding TotalType, Converter={StaticResource TotalAmountTypeToColorConverter}}" Text="{Binding TotalAmount, Converter={StaticResource AbsoluteValueConverter}}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Margin="10" Grid.Row="3" Grid.Column="3" Foreground="{Binding TotalType, Converter={StaticResource TotalAmountTypeToColorConverter}}" Text="{Binding TotalAmount, Converter={StaticResource AbsoluteDecimalValueConverter}}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
 
         </TextBlock>
 
@@ -123,7 +131,7 @@
         <TextBox Margin="10" Grid.Row="5" Grid.Column="2" Text="{Binding Name}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
 
         </TextBox>
-        <uiLibrary:DigitOnlyTextBox Margin="10" Grid.Row="5" Grid.Column="3" Text="{Binding Amount}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
+        <uiLibrary:DigitOnlyTextBox Margin="10" Grid.Row="5" Grid.Column="3" Text="{Binding Amount, Converter={StaticResource DecimalConverter}, UpdateSourceTrigger=PropertyChanged}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
 
         </uiLibrary:DigitOnlyTextBox>
     </Grid>

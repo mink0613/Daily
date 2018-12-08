@@ -69,8 +69,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Common\AbsoluteDecimalValueConverter.cs" />
     <Compile Include="Common\AbsoluteValueConverter.cs" />
     <Compile Include="Common\DailyAccountDB.cs" />
+    <Compile Include="Common\DecimalConverter.cs" />
     <Compile Include="Common\HttpWebRequest.cs" />
     <Compile Include="Common\ItemTypeToColorConverter.cs" />
     <Compile Include="Common\TotalAmountTypeToColorConverter.cs" />
