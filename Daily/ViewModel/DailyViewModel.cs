@@ -386,6 +386,7 @@ namespace Daily.ViewModel
                         
             if (_isAddMode == false)
             {
+                _selectedItem.DeleteData();
                 ItemCollection.Remove(_selectedItem);
             }
 
