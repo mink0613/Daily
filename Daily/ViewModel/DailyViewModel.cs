@@ -27,6 +27,10 @@ namespace Daily.ViewModel
 
         private ICommand _refreshClick;
 
+        private ICommand _prevWeekClick;
+
+        private ICommand _nextWeekClick;
+
         private ICommand _deleteClick;
 
         private ICommand _addUpdateClick;
@@ -50,6 +54,10 @@ namespace Daily.ViewModel
         private int _totalOutcome;
 
         private int _totalAmount;
+
+        private int _week;
+
+        private DateTime _selectedDate;
 
         public ObservableCollection<DailyModel> ItemCollection
         {
@@ -123,6 +131,22 @@ namespace Daily.ViewModel
             get
             {
                 return _refreshClick;
+            }
+        }
+
+        public ICommand PrevWeekClick
+        {
+            get
+            {
+                return _prevWeekClick;
+            }
+        }
+
+        public ICommand NextWeekClick
+        {
+            get
+            {
+                return _nextWeekClick;
             }
         }
 
@@ -315,15 +339,20 @@ namespace Daily.ViewModel
             TotalIncome = 0;
             TotalOutcome = 0;
             TotalAmount = 0;
+            _week = 0;
+            _selectedDate = DateTime.Now.AddDays(_week * 7);
 
-            MondayDate = ToStringDate(GetMondayOfWeek(DateTime.Now));
-            SundayDate = ToStringDate(GetSundayOfWeek(DateTime.Now));
+            MondayDate = ToStringDate(GetMondayOfWeek(_selectedDate));
+            SundayDate = ToStringDate(GetSundayOfWeek(_selectedDate));
 
             InitializeList();
             TextBoxInitialize();
             UpdateText();
 
             _refreshClick = new RelayCommand((param) => Refresh(), true);
+            _prevWeekClick = new RelayCommand((param) => PrevWeek(), true);
+            _nextWeekClick = new RelayCommand((param) => NextWeek(), true);
+
             _deleteClick = new RelayCommand((param) => Delete(), true);
             _addUpdateClick = new RelayCommand((param) => AddUpdate(), true);
             _clearClick = new RelayCommand((param) => Clear(), true);
@@ -332,8 +361,8 @@ namespace Daily.ViewModel
         private void InitializeList()
         {
             DailyAccountDB db = new DailyAccountDB();
-            string monday = ToStringDate(GetMondayOfWeek(DateTime.Now));
-            string sunday = ToStringDate(GetSundayOfWeek(DateTime.Now));
+            string monday = ToStringDate(GetMondayOfWeek(_selectedDate));
+            string sunday = ToStringDate(GetSundayOfWeek(_selectedDate));
 
             string result = db.GetWeeklyAccount(monday, sunday);
 
@@ -341,7 +370,7 @@ namespace Daily.ViewModel
             {
                 ItemCollection.Clear();
                 var models = JsonConvert.DeserializeObject<List<DailyModel>>(result);
-                foreach(DailyModel model in models)
+                foreach (DailyModel model in models)
                 {
                     ItemCollection.Add(model);
                 }
@@ -359,6 +388,24 @@ namespace Daily.ViewModel
             InitializeList();
             TextBoxInitialize();
             UpdateText();
+        }
+
+        private void PrevWeek()
+        {
+            _week--;
+            _selectedDate = DateTime.Now.AddDays(_week * 7);
+            MondayDate = ToStringDate(GetMondayOfWeek(_selectedDate));
+            SundayDate = ToStringDate(GetSundayOfWeek(_selectedDate));
+            Refresh();
+        }
+
+        private void NextWeek()
+        {
+            _week++;
+            _selectedDate = DateTime.Now.AddDays(_week * 7);
+            MondayDate = ToStringDate(GetMondayOfWeek(_selectedDate));
+            SundayDate = ToStringDate(GetSundayOfWeek(_selectedDate));
+            Refresh();
         }
 
         private void Delete()
@@ -442,7 +489,7 @@ namespace Daily.ViewModel
             _isAddMode = true;
 
             SelectedType = ItemType.Outcome;
-            Date = ToStringDate(DateTime.Now);
+            Date = ToStringDate(_selectedDate);
             Name = "";
             Amount = "";
         }
