@@ -49,11 +49,15 @@ namespace Daily.ViewModel
 
         private string _amount;
 
+        private string _monthTotal;
+
         private int _totalIncome;
 
         private int _totalOutcome;
 
         private int _totalAmount;
+
+        private int _monthTotalAmount;
 
         private int _week;
 
@@ -252,6 +256,19 @@ namespace Daily.ViewModel
             }
         }
 
+        public string MonthTotal
+        {
+            get
+            {
+                return _monthTotal;
+            }
+            set
+            {
+                _monthTotal = value;
+                OnPropertyChanged();
+            }
+        }
+
         public int TotalIncome
         {
             get
@@ -296,6 +313,19 @@ namespace Daily.ViewModel
                     TotalType = TotalAmountType.Plus;
                 }
 
+                OnPropertyChanged();
+            }
+        }
+
+        public int MonthTotalAmount
+        {
+            get
+            {
+                return _monthTotalAmount;
+            }
+            set
+            {
+                _monthTotalAmount = value;
                 OnPropertyChanged();
             }
         }
@@ -345,9 +375,7 @@ namespace Daily.ViewModel
             MondayDate = ToStringDate(GetMondayOfWeek(_selectedDate));
             SundayDate = ToStringDate(GetSundayOfWeek(_selectedDate));
 
-            InitializeList();
-            TextBoxInitialize();
-            UpdateText();
+            Refresh();
 
             _refreshClick = new RelayCommand((param) => Refresh(), true);
             _prevWeekClick = new RelayCommand((param) => PrevWeek(), true);
@@ -388,6 +416,14 @@ namespace Daily.ViewModel
             InitializeList();
             TextBoxInitialize();
             UpdateText();
+            UpdateMonthTotal();
+        }
+
+        private void UpdateMonthTotal()
+        {
+            int month = _selectedDate.Month;
+            MonthTotal = month + "월 총액";
+
         }
 
         private void PrevWeek()

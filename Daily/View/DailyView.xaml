@@ -35,6 +35,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
             <RowDefinition Height="*" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.3*" />
@@ -122,26 +123,34 @@
 
         </TextBlock>
 
-        <Button Margin="10" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Name="DeleteClick" Content="삭제" FontSize="20" Command="{Binding DeleteClick}" >
+        <TextBlock Margin="10" Grid.Row="4" Grid.Column="3" Text="{Binding MonthTotal}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
+
+        </TextBlock>
+
+        <TextBlock Margin="10" Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="2" Foreground="{Binding TotalType, Converter={StaticResource TotalAmountTypeToColorConverter}}" Text="{Binding ThisMonthTotalAmount, Converter={StaticResource AbsoluteDecimalValueConverter}}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
+
+        </TextBlock>
+
+        <Button Margin="10" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Name="DeleteClick" Content="삭제" FontSize="20" Command="{Binding DeleteClick}" >
 
         </Button>
         
-        <Button Margin="10" Grid.Row="4" Grid.Column="2" Grid.ColumnSpan="2" Name="AddClick" Content="{Binding AddUpdateText}" FontSize="20" Command="{Binding AddUpdateClick}" >
+        <Button Margin="10" Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="2" Name="AddClick" Content="{Binding AddUpdateText}" FontSize="20" Command="{Binding AddUpdateClick}" >
 
         </Button>
 
-        <Button Margin="10" Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="2" Name="ClearClick" Content="취소" FontSize="20" Command="{Binding ClearClick}" >
+        <Button Margin="10" Grid.Row="5" Grid.Column="4" Grid.ColumnSpan="2" Name="ClearClick" Content="취소" FontSize="20" Command="{Binding ClearClick}" >
 
         </Button>
 
-        <ComboBox Name="TypeComboBox" Margin="10" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding TypeList}" FontSize="20" SelectedItem="{Binding SelectedType}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-        <TextBox Margin="10" Grid.Row="5" Grid.Column="2" Text="{Binding Date}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
+        <ComboBox Name="TypeComboBox" Margin="10" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding TypeList}" FontSize="20" SelectedItem="{Binding SelectedType}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+        <TextBox Margin="10" Grid.Row="6" Grid.Column="2" Text="{Binding Date}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
 
         </TextBox>
-        <TextBox Margin="10" Grid.Row="5" Grid.Column="3" Grid.ColumnSpan="2" Text="{Binding Name}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
+        <TextBox Name="ItemBox" Margin="10" Grid.Row="6" Grid.Column="3" Grid.ColumnSpan="2" Text="{Binding Name}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
 
         </TextBox>
-        <uiLibrary:DigitOnlyTextBox Margin="10" Grid.Row="5" Grid.Column="5" Text="{Binding Amount, Converter={StaticResource DecimalConverter}, UpdateSourceTrigger=PropertyChanged}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
+        <uiLibrary:DigitOnlyTextBox Margin="10" Grid.Row="6" Grid.Column="5" Text="{Binding Amount, Converter={StaticResource DecimalConverter}, UpdateSourceTrigger=PropertyChanged}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
 
         </uiLibrary:DigitOnlyTextBox>
     </Grid>

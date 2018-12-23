@@ -1,6 +1,7 @@
 ﻿using Daily.ViewModel;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Media;
 
 namespace Daily.View
 {
@@ -23,11 +24,47 @@ namespace Daily.View
             }
         }
 
+        private readonly string _itemBoxWatermark = "항목 입력";
+
         public DailyView()
         {
             InitializeComponent();
 
+            ItemBox.TextChanged += ItemBox_TextChanged;
+            ItemBox.GotFocus += ItemBox_GotFocus;
+            ItemBox.LostFocus += ItemBox_LostFocus;
+            ItemBox.Text = _itemBoxWatermark;
             //ShowScrollBar(listView.Handle.ToInt64(), SB_HORZ, 0);
+        }
+
+        private void ItemBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (ItemBox.Text.Equals(""))
+            {
+                ItemBox.Text = _itemBoxWatermark;
+            }
+        }
+
+        private void ItemBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (ItemBox.Text.Equals(_itemBoxWatermark))
+            {
+                ItemBox.Text = "";
+                ItemBox.Foreground = Brushes.Black;
+            }
+        }
+
+        private void ItemBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        {
+            if (ItemBox.Text.Equals(_itemBoxWatermark) || ItemBox.Text.Equals(""))
+            {
+                if (ItemBox.Text.Equals(_itemBoxWatermark))
+                {
+                    ItemBox.Foreground = Brushes.Gray;
+                }
+                
+                return;
+            }
         }
     }
 }
