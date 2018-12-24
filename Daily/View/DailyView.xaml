@@ -127,7 +127,7 @@
 
         </TextBlock>
 
-        <TextBlock Margin="10" Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="2" Foreground="{Binding TotalType, Converter={StaticResource TotalAmountTypeToColorConverter}}" Text="{Binding ThisMonthTotalAmount, Converter={StaticResource AbsoluteDecimalValueConverter}}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Margin="10" Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="2" Foreground="Red" Text="{Binding MonthTotalAmount, Converter={StaticResource AbsoluteDecimalValueConverter}}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
 
         </TextBlock>
 

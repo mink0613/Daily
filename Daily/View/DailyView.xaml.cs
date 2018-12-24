@@ -16,6 +16,8 @@ namespace Daily.View
         long SB_VERT = 1;
         long SB_BOTH = 3;
 
+        private bool _isUpdate = true;
+
         public DailyViewModel ViewModel
         {
             get
@@ -49,6 +51,7 @@ namespace Daily.View
         {
             if (ItemBox.Text.Equals(_itemBoxWatermark))
             {
+                _isUpdate = false;
                 ItemBox.Text = "";
                 ItemBox.Foreground = Brushes.Black;
             }
@@ -63,7 +66,17 @@ namespace Daily.View
                     ItemBox.Foreground = Brushes.Gray;
                 }
                 
-                return;
+                if (ItemBox.Text.Equals(""))
+                {
+                    if (_isUpdate == true && ItemBox.IsFocused == false)
+                    {
+                        ItemBox.Text = _itemBoxWatermark;
+                    }
+                    else
+                    {
+                        _isUpdate = true; // revert
+                    }
+                }
             }
         }
     }

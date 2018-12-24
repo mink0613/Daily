@@ -25,6 +25,8 @@ namespace Daily.ViewModel
 
         private bool _isAddMode;
 
+        private int _monthSearched;
+
         private ICommand _refreshClick;
 
         private ICommand _prevWeekClick;
@@ -409,6 +411,24 @@ namespace Daily.ViewModel
             {
                 Console.WriteLine(e.ToString());
             }
+
+            int month = _selectedDate.Month;
+            if (month != _monthSearched)
+            {
+                result = db.GetMonthlyTotalAccount(_selectedDate.Month);
+                try
+                {
+                    var model = JsonConvert.DeserializeObject<MonthTotalModel>(result);
+                    MonthTotal = month + "월 총액";
+                    MonthTotalAmount = model.TotalOutcomeAmount;
+
+                    _monthSearched = month;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
+            }
         }
 
         private void Refresh()
@@ -416,14 +436,6 @@ namespace Daily.ViewModel
             InitializeList();
             TextBoxInitialize();
             UpdateText();
-            UpdateMonthTotal();
-        }
-
-        private void UpdateMonthTotal()
-        {
-            int month = _selectedDate.Month;
-            MonthTotal = month + "월 총액";
-
         }
 
         private void PrevWeek()
