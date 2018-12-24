@@ -78,6 +78,10 @@ namespace Daily.View
                     }
                 }
             }
+            else
+            {
+                ItemBox.Foreground = Brushes.Black;
+            }
         }
     }
 }

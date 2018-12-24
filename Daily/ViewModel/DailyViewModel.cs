@@ -419,7 +419,7 @@ namespace Daily.ViewModel
                 try
                 {
                     var model = JsonConvert.DeserializeObject<MonthTotalModel>(result);
-                    MonthTotal = month + "월 총액";
+                    MonthTotal = month + " 월 지출 총액";
                     MonthTotalAmount = model.TotalOutcomeAmount;
 
                     _monthSearched = month;
@@ -495,6 +495,7 @@ namespace Daily.ViewModel
 
             newItem.AddData();
 
+            _monthSearched = 0; // In order to update monthly total amount
             InitializeList(); // In order to update all the IDs
             TextBoxInitialize();
             UpdateText();
