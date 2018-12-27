@@ -85,7 +85,7 @@
             </DVC:Chart.LegendStyle>
             <DVC:Chart.Series>
                 <DVC:ColumnSeries ItemsSource="{Binding GraphItemCollection}" IndependentValueBinding="{Binding Path=Key}" DependentValueBinding="{Binding Path=Value}">
-                    <!--DVC:ColumnSeries.DataPointStyle>
+                    <DVC:ColumnSeries.DataPointStyle>
                         <Style TargetType="DVC:ColumnDataPoint">
                             <Setter Property="Template">
                                 <Setter.Value>
@@ -100,7 +100,7 @@
                                 </Setter.Value>
                             </Setter>
                         </Style>
-                    </-->
+                    </DVC:ColumnSeries.DataPointStyle>
                 </DVC:ColumnSeries>
             </DVC:Chart.Series>
         </DVC:Chart>
