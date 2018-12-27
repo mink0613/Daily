@@ -7,13 +7,26 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using UILibrary.Base;
 
 namespace Daily.ViewModel
 {
+    public enum GraphType
+    {
+        Daily,
+        Weekly,
+        Monthly,
+        Yearly
+    }
+
     public class DailyViewModel : BaseViewModel
     {
         private ObservableCollection<DailyModel> _itemCollection;
+
+        private ObservableCollection<KeyValuePair<string, int>> _graphItemCollection;
+
+        private GraphType _selectedGraphType;
 
         private DailyModel _selectedItem;
 
@@ -38,6 +51,8 @@ namespace Daily.ViewModel
         private ICommand _addUpdateClick;
 
         private ICommand _clearClick;
+
+        private ICommand _graphToggleClick;
 
         private string _mondayDate;
 
@@ -65,6 +80,8 @@ namespace Daily.ViewModel
 
         private DateTime _selectedDate;
 
+        private bool _isShowGraph;
+
         public ObservableCollection<DailyModel> ItemCollection
         {
             get
@@ -74,6 +91,19 @@ namespace Daily.ViewModel
             set
             {
                 _itemCollection = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<KeyValuePair<string, int>> GraphItemCollection
+        {
+            get
+            {
+                return _graphItemCollection;
+            }
+            set
+            {
+                _graphItemCollection = value;
                 OnPropertyChanged();
             }
         }
@@ -177,6 +207,14 @@ namespace Daily.ViewModel
             get
             {
                 return _clearClick;
+            }
+        }
+
+        public ICommand GraphToggleClick
+        {
+            get
+            {
+                return _graphToggleClick;
             }
         }
 
@@ -332,6 +370,19 @@ namespace Daily.ViewModel
             }
         }
 
+        public bool IsShowGraph
+        {
+            get
+            {
+                return _isShowGraph;
+            }
+            set
+            {
+                _isShowGraph = value;
+                OnPropertyChanged();
+            }
+        }
+
         private DateTime GetMondayOfWeek(DateTime date)
         {
             if (date.DayOfWeek != DayOfWeek.Monday)
@@ -368,11 +419,16 @@ namespace Daily.ViewModel
             SelectedType = TypeList[0];
 
             ItemCollection = new ObservableCollection<DailyModel>();
+            GraphItemCollection = new ObservableCollection<KeyValuePair<string, int>>();
+
             TotalIncome = 0;
             TotalOutcome = 0;
             TotalAmount = 0;
             _week = 0;
             _selectedDate = DateTime.Now.AddDays(_week * 7);
+
+            _selectedGraphType = GraphType.Daily;
+            IsShowGraph = false;
 
             MondayDate = ToStringDate(GetMondayOfWeek(_selectedDate));
             SundayDate = ToStringDate(GetSundayOfWeek(_selectedDate));
@@ -386,6 +442,44 @@ namespace Daily.ViewModel
             _deleteClick = new RelayCommand((param) => Delete(), true);
             _addUpdateClick = new RelayCommand((param) => AddUpdate(), true);
             _clearClick = new RelayCommand((param) => Clear(), true);
+            _graphToggleClick = new RelayCommand((param) => GraphToggle(), true);
+        }
+
+        private void UpdateGraphButtonImage()
+        {
+            IsShowGraph = !IsShowGraph;
+            UpdateGraph();
+        }
+
+        private void UpdateGraph()
+        {
+            if (IsShowGraph == false)
+            {
+                return;
+            }
+
+            GraphItemCollection.Clear();
+            for (int i = ItemCollection.Count - 1; i >= 0; i--)
+            {
+                if (ItemCollection[i].Type == ItemType.Income)
+                {
+                    continue;
+                }
+
+                var itemList = GraphItemCollection.Where(x => x.Key.Equals(ItemCollection[i].Date));
+                if (itemList.Count() == 0)
+                {
+                    GraphItemCollection.Add(new KeyValuePair<string, int>(ItemCollection[i].Date, ItemCollection[i].Amount));
+                }
+                else
+                {
+                    var item = itemList.First();
+                    KeyValuePair<string, int> newItem = new KeyValuePair<string, int>(item.Key, item.Value + ItemCollection[i].Amount);
+
+                    GraphItemCollection.Remove(item);
+                    GraphItemCollection.Add(newItem);
+                }
+            }
         }
 
         private void InitializeList()
@@ -436,6 +530,7 @@ namespace Daily.ViewModel
             InitializeList();
             TextBoxInitialize();
             UpdateText();
+            UpdateGraph();
         }
 
         private void PrevWeek()
@@ -531,6 +626,11 @@ namespace Daily.ViewModel
             _selectedItem = null;
             TextBoxInitialize();
             UpdateText();
+        }
+
+        private void GraphToggle()
+        {
+            UpdateGraphButtonImage();
         }
 
         private void TextBoxInitialize()

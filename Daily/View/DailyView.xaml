@@ -9,6 +9,8 @@
         xmlns:converterLibrary="clr-namespace:UILibrary.Converters;assembly=UILibrary"
         xmlns:buttonsLibrary="clr-namespace:UILibrary.Buttons;assembly=UILibrary"
         xmlns:uiLibrary="clr-namespace:UILibrary.TextBoxes;assembly=UILibrary"
+        xmlns:DV="clr-namespace:System.Windows.Controls.DataVisualization;assembly=System.Windows.Controls.DataVisualization.Toolkit"
+        xmlns:DVC="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
         Title="DailyView" Height="750" Width="1000">
@@ -20,6 +22,8 @@
         <common:AbsoluteValueConverter x:Key="AbsoluteValueConverter" />
         <common:AbsoluteDecimalValueConverter x:Key="AbsoluteDecimalValueConverter" />
         <converterLibrary:WidthConverter x:Key="WidthConverter" />
+        <converterLibrary:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <converterLibrary:BoolToOppositeVisibilityConverter x:Key="BoolToOppositeVisibilityConverter" />
         <Style TargetType="ListViewItem">
             <Setter Property="HorizontalContentAlignment" Value="Center" />
         </Style>
@@ -60,11 +64,48 @@
 
         </Button>
 
-        <buttonsLibrary:ImageButton Image="/Image/refresh.ico" Margin="10" Grid.Row="0" Grid.Column="5" Height="35" Width="50" HorizontalAlignment="Right" FontSize="20" Command="{Binding RefreshClick}" >
+        <buttonsLibrary:ImageButton Image="/Image/graph.ico" Visibility="{Binding IsShowGraph, Converter={StaticResource BoolToOppositeVisibilityConverter}}" Margin="0,0,100,0" Grid.Row="0" Grid.Column="5" Height="35" Width="50" HorizontalAlignment="Right" FontSize="20" Command="{Binding GraphToggleClick}" >
 
         </buttonsLibrary:ImageButton>
 
-        <ListView Name="listView" Grid.Row="1" Grid.ColumnSpan="6" ItemsSource="{Binding ItemCollection}" SelectedItem="{Binding SelectedItem}" FontSize="20" HorizontalContentAlignment="Center">
+        <buttonsLibrary:ImageButton Image="/Image/list.ico" Visibility="{Binding IsShowGraph, Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,0,100,0" Grid.Row="0" Grid.Column="5" Height="35" Width="50" HorizontalAlignment="Right" FontSize="20" Command="{Binding GraphToggleClick}" >
+
+        </buttonsLibrary:ImageButton>
+
+        <buttonsLibrary:ImageButton Image="/Image/refresh.ico" Margin="0,0,10,0" Grid.Row="0" Grid.Column="5" Height="35" Width="50" HorizontalAlignment="Right" FontSize="20" Command="{Binding RefreshClick}" >
+
+        </buttonsLibrary:ImageButton>
+
+        <DVC:Chart Grid.Row="1" Grid.ColumnSpan="6" Name="mcChart" Background="LightSteelBlue" Visibility="{Binding IsShowGraph, Converter={StaticResource BoolToVisibilityConverter}}">
+            <DVC:Chart.LegendStyle>
+                <Style TargetType="Control">
+                    <Setter Property="Width" Value="0"/>
+                    <Setter Property="Height" Value="0"/>
+                </Style>
+            </DVC:Chart.LegendStyle>
+            <DVC:Chart.Series>
+                <DVC:ColumnSeries ItemsSource="{Binding GraphItemCollection}" IndependentValueBinding="{Binding Path=Key}" DependentValueBinding="{Binding Path=Value}">
+                    <!--DVC:ColumnSeries.DataPointStyle>
+                        <Style TargetType="DVC:ColumnDataPoint">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="DVC:ColumnDataPoint">
+                                        <Grid >
+                                            <Rectangle Fill="{TemplateBinding Background}" Stroke="Black"/>
+                                            <Grid Margin="0 -20 0 0" HorizontalAlignment="Center" VerticalAlignment="Top">
+                                                <TextBlock Text="{TemplateBinding FormattedDependentValue, Converter={StaticResource DecimalConverter}}" Margin="2"/>
+                                            </Grid>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </-->
+                </DVC:ColumnSeries>
+            </DVC:Chart.Series>
+        </DVC:Chart>
+
+        <ListView Visibility="{Binding IsShowGraph, Converter={StaticResource BoolToOppositeVisibilityConverter}}" Name="listView" Grid.Row="1" Grid.ColumnSpan="6" ItemsSource="{Binding ItemCollection}" SelectedItem="{Binding SelectedItem}" FontSize="20" HorizontalContentAlignment="Center">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="지출/소비" Width="150" x:Name="col1">
@@ -131,26 +172,26 @@
 
         </TextBlock>
 
-        <Button Margin="10" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Name="DeleteClick" Content="삭제" FontSize="20" Command="{Binding DeleteClick}" >
-
-        </Button>
-        
-        <Button Margin="10" Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="2" Name="AddClick" Content="{Binding AddUpdateText}" FontSize="20" Command="{Binding AddUpdateClick}" >
+        <Button Visibility="{Binding IsShowGraph, Converter={StaticResource BoolToOppositeVisibilityConverter}}" Margin="10" Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Name="DeleteClick" Content="삭제" FontSize="20" Command="{Binding DeleteClick}" >
 
         </Button>
 
-        <Button Margin="10" Grid.Row="5" Grid.Column="4" Grid.ColumnSpan="2" Name="ClearClick" Content="취소" FontSize="20" Command="{Binding ClearClick}" >
+        <Button Visibility="{Binding IsShowGraph, Converter={StaticResource BoolToOppositeVisibilityConverter}}" Margin="10" Grid.Row="5" Grid.Column="2" Grid.ColumnSpan="2" Name="AddClick" Content="{Binding AddUpdateText}" FontSize="20" Command="{Binding AddUpdateClick}" >
 
         </Button>
 
-        <ComboBox Name="TypeComboBox" Margin="10" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding TypeList}" FontSize="20" SelectedItem="{Binding SelectedType}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-        <TextBox Margin="10" Grid.Row="6" Grid.Column="2" Text="{Binding Date}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
+        <Button Visibility="{Binding IsShowGraph, Converter={StaticResource BoolToOppositeVisibilityConverter}}" Margin="10" Grid.Row="5" Grid.Column="4" Grid.ColumnSpan="2" Name="ClearClick" Content="취소" FontSize="20" Command="{Binding ClearClick}" >
+
+        </Button>
+
+        <ComboBox Visibility="{Binding IsShowGraph, Converter={StaticResource BoolToOppositeVisibilityConverter}}" Name="TypeComboBox" Margin="10" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding TypeList}" FontSize="20" SelectedItem="{Binding SelectedType}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
+        <TextBox Visibility="{Binding IsShowGraph, Converter={StaticResource BoolToOppositeVisibilityConverter}}" Margin="10" Grid.Row="6" Grid.Column="2" Text="{Binding Date}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
 
         </TextBox>
-        <TextBox Name="ItemBox" Margin="10" Grid.Row="6" Grid.Column="3" Grid.ColumnSpan="2" Text="{Binding Name}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
+        <TextBox Visibility="{Binding IsShowGraph, Converter={StaticResource BoolToOppositeVisibilityConverter}}" Name="ItemBox" Margin="10" Grid.Row="6" Grid.Column="3" Grid.ColumnSpan="2" Text="{Binding Name}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
 
         </TextBox>
-        <uiLibrary:DigitOnlyTextBox Margin="10" Grid.Row="6" Grid.Column="5" Text="{Binding Amount, Converter={StaticResource DecimalConverter}, UpdateSourceTrigger=PropertyChanged}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
+        <uiLibrary:DigitOnlyTextBox Visibility="{Binding IsShowGraph, Converter={StaticResource BoolToOppositeVisibilityConverter}}" Margin="10" Grid.Row="6" Grid.Column="5" Text="{Binding Amount, Converter={StaticResource DecimalConverter}, UpdateSourceTrigger=PropertyChanged}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
 
         </uiLibrary:DigitOnlyTextBox>
     </Grid>
