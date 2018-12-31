@@ -22,6 +22,8 @@ namespace Daily.ViewModel
 
     public class DailyViewModel : BaseViewModel
     {
+        private readonly int _periodStartDate = 16;
+
         private ObservableCollection<DailyModel> _itemCollection;
 
         private ObservableCollection<KeyValuePair<string, int>> _graphItemCollection;
@@ -66,6 +68,8 @@ namespace Daily.ViewModel
 
         private string _amount;
 
+        private string _periodTotal;
+
         private string _monthTotal;
 
         private int _totalIncome;
@@ -74,11 +78,15 @@ namespace Daily.ViewModel
 
         private int _totalAmount;
 
+        private int _periodTotalAmount;
+
         private int _monthTotalAmount;
 
         private int _week;
 
         private DateTime _selectedDate;
+
+        private DateTime _lastSearchedStartDayofPeriod;
 
         private bool _isShowGraph;
 
@@ -296,6 +304,19 @@ namespace Daily.ViewModel
             }
         }
 
+        public string PeriodTotal
+        {
+            get
+            {
+                return _periodTotal;
+            }
+            set
+            {
+                _periodTotal = value;
+                OnPropertyChanged();
+            }
+        }
+
         public string MonthTotal
         {
             get
@@ -357,6 +378,19 @@ namespace Daily.ViewModel
             }
         }
 
+        public int PeriodTotalAmount
+        {
+            get
+            {
+                return _periodTotalAmount;
+            }
+            set
+            {
+                _periodTotalAmount = value;
+                OnPropertyChanged();
+            }
+        }
+
         public int MonthTotalAmount
         {
             get
@@ -403,9 +437,34 @@ namespace Daily.ViewModel
             return date;
         }
 
+        private DateTime GetStartDayofPeriod(DateTime date)
+        {
+            if (date.Day != _periodStartDate)
+            {
+                return GetStartDayofPeriod(date.AddDays(-1));
+            }
+
+            return date;
+        }
+
+        private DateTime GetEndDayofPeriod(DateTime date)
+        {
+            if (date.Day != _periodStartDate - 1)
+            {
+                return GetEndDayofPeriod(date.AddDays(1));
+            }
+
+            return date;
+        }
+
         private string ToStringDate(DateTime date)
         {
             return date.ToString("yyyy-MM-dd");
+        }
+
+        private string ToStringDateMMDD(DateTime date)
+        {
+            return date.ToString("MM-dd");
         }
 
         private void Initialize()
@@ -425,7 +484,7 @@ namespace Daily.ViewModel
             TotalOutcome = 0;
             TotalAmount = 0;
             _week = 0;
-            _selectedDate = DateTime.Now.AddDays(_week * 7);
+            _selectedDate = DateTime.Today.AddDays(_week * 7);
 
             _selectedGraphType = GraphType.Daily;
             IsShowGraph = false;
@@ -484,6 +543,7 @@ namespace Daily.ViewModel
 
         private void InitializeList()
         {
+            // Calculate weekly total account info
             DailyAccountDB db = new DailyAccountDB();
             string monday = ToStringDate(GetMondayOfWeek(_selectedDate));
             string sunday = ToStringDate(GetSundayOfWeek(_selectedDate));
@@ -506,13 +566,34 @@ namespace Daily.ViewModel
                 Console.WriteLine(e.ToString());
             }
 
+            // Calculate period total account info
+            DateTime startDayofPeriod = GetStartDayofPeriod(_selectedDate);
+            if (_lastSearchedStartDayofPeriod != startDayofPeriod)
+            {
+                DateTime endDayofPeriod = GetEndDayofPeriod(_selectedDate);
+                result = db.GetPeriodTotalAccount(ToStringDate(startDayofPeriod), ToStringDate(endDayofPeriod));
+                try
+                {
+                    var model = JsonConvert.DeserializeObject<TotalModel>(result);
+                    PeriodTotal = ToStringDateMMDD(startDayofPeriod) + " ~ " + ToStringDateMMDD(endDayofPeriod) + " 지출 총액";
+                    PeriodTotalAmount = model.TotalOutcomeAmount;
+
+                    _lastSearchedStartDayofPeriod = startDayofPeriod;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.ToString());
+                }
+            }
+
+            // Calculate monthly total account info
             int month = _selectedDate.Month;
             if (month != _monthSearched)
             {
                 result = db.GetMonthlyTotalAccount(_selectedDate.Month);
                 try
                 {
-                    var model = JsonConvert.DeserializeObject<MonthTotalModel>(result);
+                    var model = JsonConvert.DeserializeObject<TotalModel>(result);
                     MonthTotal = month + " 월 지출 총액";
                     MonthTotalAmount = model.TotalOutcomeAmount;
 
@@ -536,7 +617,7 @@ namespace Daily.ViewModel
         private void PrevWeek()
         {
             _week--;
-            _selectedDate = DateTime.Now.AddDays(_week * 7);
+            _selectedDate = DateTime.Today.AddDays(_week * 7);
             MondayDate = ToStringDate(GetMondayOfWeek(_selectedDate));
             SundayDate = ToStringDate(GetSundayOfWeek(_selectedDate));
             Refresh();
@@ -545,7 +626,7 @@ namespace Daily.ViewModel
         private void NextWeek()
         {
             _week++;
-            _selectedDate = DateTime.Now.AddDays(_week * 7);
+            _selectedDate = DateTime.Today.AddDays(_week * 7);
             MondayDate = ToStringDate(GetMondayOfWeek(_selectedDate));
             SundayDate = ToStringDate(GetSundayOfWeek(_selectedDate));
             Refresh();

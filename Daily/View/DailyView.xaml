@@ -164,6 +164,14 @@
 
         </TextBlock>
 
+        <TextBlock Margin="10" Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding PeriodTotal}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center" TextWrapping="WrapWithOverflow">
+
+        </TextBlock>
+
+        <TextBlock Margin="10" Grid.Row="4" Grid.Column="2" Foreground="Red" Text="{Binding PeriodTotalAmount, Converter={StaticResource AbsoluteDecimalValueConverter}}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
+
+        </TextBlock>
+        
         <TextBlock Margin="10" Grid.Row="4" Grid.Column="3" Text="{Binding MonthTotal}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
 
         </TextBlock>

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Daily.Model
 {
-    class MonthTotalModel
+    class TotalModel
     {
         private int _totalOutcomeAmount;
 

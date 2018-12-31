@@ -89,7 +89,7 @@
     <Compile Include="Common\ItemTypeToColorConverter.cs" />
     <Compile Include="Common\TotalAmountTypeToColorConverter.cs" />
     <Compile Include="Model\DailyModel.cs" />
-    <Compile Include="Model\MonthTotalModel.cs" />
+    <Compile Include="Model\TotalModel.cs" />
     <Compile Include="ViewModel\DailyViewModel.cs" />
     <Compile Include="View\DailyView.xaml.cs">
       <DependentUpon>DailyView.xaml</DependentUpon>
