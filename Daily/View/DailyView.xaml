@@ -193,7 +193,7 @@
         </Button>
 
         <ComboBox Visibility="{Binding IsShowGraph, Converter={StaticResource BoolToOppositeVisibilityConverter}}" Name="TypeComboBox" Margin="10" Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" ItemsSource="{Binding TypeList}" FontSize="20" SelectedItem="{Binding SelectedType}" HorizontalContentAlignment="Center" VerticalContentAlignment="Center"/>
-        <TextBox Visibility="{Binding IsShowGraph, Converter={StaticResource BoolToOppositeVisibilityConverter}}" Margin="10" Grid.Row="6" Grid.Column="2" Text="{Binding Date}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
+        <TextBox Name="DateTextBox" Visibility="{Binding IsShowGraph, Converter={StaticResource BoolToOppositeVisibilityConverter}}" Margin="10" Grid.Row="6" Grid.Column="2" Text="{Binding Date}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">
 
         </TextBox>
         <TextBox Visibility="{Binding IsShowGraph, Converter={StaticResource BoolToOppositeVisibilityConverter}}" Name="ItemBox" Margin="10" Grid.Row="6" Grid.Column="3" Grid.ColumnSpan="2" Text="{Binding Name}" FontSize="20" TextAlignment="Center" VerticalContentAlignment="Center">

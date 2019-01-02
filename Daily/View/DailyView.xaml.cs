@@ -36,7 +36,14 @@ namespace Daily.View
             ItemBox.GotFocus += ItemBox_GotFocus;
             ItemBox.LostFocus += ItemBox_LostFocus;
             ItemBox.Text = _itemBoxWatermark;
+
+            DateTextBox.LostFocus += DateTextBox_LostFocus;
             //ShowScrollBar(listView.Handle.ToInt64(), SB_HORZ, 0);
+        }
+
+        private void DateTextBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            ViewModel.CheckDateFormat();
         }
 
         private void ItemBox_LostFocus(object sender, RoutedEventArgs e)

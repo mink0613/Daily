@@ -590,7 +590,7 @@ namespace Daily.ViewModel
             int month = _selectedDate.Month;
             if (month != _monthSearched)
             {
-                result = db.GetMonthlyTotalAccount(_selectedDate.Month);
+                result = db.GetMonthlyTotalAccount(_selectedDate.Year, _selectedDate.Month);
                 try
                 {
                     var model = JsonConvert.DeserializeObject<TotalModel>(result);
@@ -740,6 +740,16 @@ namespace Daily.ViewModel
                 Date = _selectedItem.Date;
                 Name = _selectedItem.Name;
                 Amount = _selectedItem.Amount.ToString();
+            }
+        }
+
+        public void CheckDateFormat()
+        {
+            string dateDigitOnly = Date.Replace("-", "");
+            int digits = 0;
+            if (int.TryParse(dateDigitOnly, out digits) == false || dateDigitOnly.Length != 8)
+            {
+                Date = ToStringDate(_selectedDate);
             }
         }
 

@@ -38,10 +38,10 @@ namespace Daily.Common
             return Get(fullUrl);
         }
 
-        public string GetMonthlyTotalAccount(int month)
+        public string GetMonthlyTotalAccount(int year, int month)
         {
             string fullUrl = getMonthlyUrl + "?";
-            fullUrl += "searchMonth=" + month;
+            fullUrl += "searchYear=" + year + "&searchMonth=" + month;
 
             return Get(fullUrl);
         }
