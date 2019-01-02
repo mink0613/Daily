@@ -417,6 +417,27 @@ namespace Daily.ViewModel
             }
         }
 
+        private DateTime GetDayOfWeek(DateTime date, DayOfWeek day)
+        {
+            if (date.DayOfWeek < day)
+            {
+                return GetDayOfWeek(date.AddDays(1), day);
+            }
+            else if (date.DayOfWeek > day)
+            {
+                // Let Sunday be the last day of week
+                if (day == DayOfWeek.Sunday)
+                {
+                    return GetDayOfWeek(date.AddDays(1), day);
+                }
+                else
+                {
+                    return GetDayOfWeek(date.AddDays(-1), day);
+                }
+            }
+            return date;
+        }
+
         private DateTime GetMondayOfWeek(DateTime date)
         {
             if (date.DayOfWeek != DayOfWeek.Monday)
@@ -517,7 +538,17 @@ namespace Daily.ViewModel
                 return;
             }
 
-            GraphItemCollection.Clear();
+            ObservableCollection<KeyValuePair<string, int>> tempCollection = new ObservableCollection<KeyValuePair<string, int>>();
+
+            // Initialize collection
+            tempCollection.Add(new KeyValuePair<string, int>(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Monday)), 0));
+            tempCollection.Add(new KeyValuePair<string, int>(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Tuesday)), 0));
+            tempCollection.Add(new KeyValuePair<string, int>(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Wednesday)), 0));
+            tempCollection.Add(new KeyValuePair<string, int>(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Thursday)), 0));
+            tempCollection.Add(new KeyValuePair<string, int>(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Friday)), 0));
+            tempCollection.Add(new KeyValuePair<string, int>(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Saturday)), 0));
+            tempCollection.Add(new KeyValuePair<string, int>(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Sunday)), 0));
+
             for (int i = ItemCollection.Count - 1; i >= 0; i--)
             {
                 if (ItemCollection[i].Type == ItemType.Income)
@@ -525,19 +556,27 @@ namespace Daily.ViewModel
                     continue;
                 }
 
-                var itemList = GraphItemCollection.Where(x => x.Key.Equals(ItemCollection[i].Date));
+                var itemList = tempCollection.Where(x => x.Key.Equals(ItemCollection[i].Date));
                 if (itemList.Count() == 0)
                 {
-                    GraphItemCollection.Add(new KeyValuePair<string, int>(ItemCollection[i].Date, ItemCollection[i].Amount));
+                    tempCollection.Add(new KeyValuePair<string, int>(ItemCollection[i].Date, ItemCollection[i].Amount));
                 }
                 else
                 {
                     var item = itemList.First();
                     KeyValuePair<string, int> newItem = new KeyValuePair<string, int>(item.Key, item.Value + ItemCollection[i].Amount);
 
-                    GraphItemCollection.Remove(item);
-                    GraphItemCollection.Add(newItem);
+                    tempCollection.Remove(item);
+                    tempCollection.Add(newItem);
                 }
+            }
+
+            // Save to GraphItemCollection
+            GraphItemCollection.Clear();
+            var sortedCollection = tempCollection.OrderBy(x => x.Key);
+            for (int i = 0; i < sortedCollection.Count(); i++)
+            {
+                GraphItemCollection.Add(sortedCollection.ElementAt(i));
             }
         }
 
