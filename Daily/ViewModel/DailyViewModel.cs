@@ -710,6 +710,7 @@ namespace Daily.ViewModel
 
             newItem.AddData();
 
+            _lastSearchedStartDayofPeriod = DateTime.MinValue; // In order to update period total amount
             _monthSearched = 0; // In order to update monthly total amount
             InitializeList(); // In order to update all the IDs
             TextBoxInitialize();
