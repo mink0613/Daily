@@ -1,5 +1,6 @@
 ﻿using Daily.Common;
 using Daily.Model;
+using LiveCharts;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -27,6 +28,8 @@ namespace Daily.ViewModel
         private ObservableCollection<DailyModel> _itemCollection;
 
         private ObservableCollection<KeyValuePair<string, int>> _graphItemCollection;
+
+        private SeriesCollection _graphDataCollection;
 
         private GraphType _selectedGraphType;
 
@@ -112,6 +115,19 @@ namespace Daily.ViewModel
             set
             {
                 _graphItemCollection = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public SeriesCollection GraphDataCollection
+        {
+            get
+            {
+                return _graphDataCollection;
+            }
+            set
+            {
+                _graphDataCollection = value;
                 OnPropertyChanged();
             }
         }
@@ -500,7 +516,8 @@ namespace Daily.ViewModel
 
             ItemCollection = new ObservableCollection<DailyModel>();
             GraphItemCollection = new ObservableCollection<KeyValuePair<string, int>>();
-
+            GraphDataCollection = new SeriesCollection();
+            
             TotalIncome = 0;
             TotalOutcome = 0;
             TotalAmount = 0;
@@ -539,6 +556,7 @@ namespace Daily.ViewModel
             }
 
             ObservableCollection<KeyValuePair<string, int>> tempCollection = new ObservableCollection<KeyValuePair<string, int>>();
+            GraphDataCollection.Clear();
 
             // Initialize collection
             tempCollection.Add(new KeyValuePair<string, int>(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Monday)), 0));
