@@ -792,6 +792,7 @@ namespace Daily.ViewModel
                 try
                 {
                     var modelList = JsonConvert.DeserializeObject<List<DailyModel>>(result);
+                    modelList.Sort((DailyModel x, DailyModel y) => x.Date.CompareTo(y.Date));
 
                     if (modelList != null && modelList.Count > 0)
                     {
