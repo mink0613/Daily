@@ -879,7 +879,7 @@ namespace Daily.ViewModel
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show("File is opened. Please close word file.");
+                            MessageBox.Show("오류가 발생했습니다. 다시 시도 해 주세요.");
                         }
                     }
                 }
