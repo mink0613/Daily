@@ -64,11 +64,15 @@
 
         </Button>
 
-        <buttonsLibrary:ImageButton Image="/Image/graph.ico" Visibility="{Binding IsShowGraph, Converter={StaticResource BoolToOppositeVisibilityConverter}}" Margin="0,0,100,0" Grid.Row="0" Grid.Column="5" Height="35" Width="50" HorizontalAlignment="Right" FontSize="20" Command="{Binding GraphToggleClick}" >
+        <buttonsLibrary:ImageButton Image="/Image/printer.png" Margin="0,0,150,0" Grid.Row="0" Grid.Column="5" Height="35" Width="50" HorizontalAlignment="Right" FontSize="20" Command="{Binding PrintClick}" >
+
+        </buttonsLibrary:ImageButton>
+        
+        <buttonsLibrary:ImageButton Image="/Image/graph.ico" Visibility="{Binding IsShowGraph, Converter={StaticResource BoolToOppositeVisibilityConverter}}" Margin="0,0,80,0" Grid.Row="0" Grid.Column="5" Height="35" Width="50" HorizontalAlignment="Right" FontSize="20" Command="{Binding GraphToggleClick}" >
 
         </buttonsLibrary:ImageButton>
 
-        <buttonsLibrary:ImageButton Image="/Image/list.ico" Visibility="{Binding IsShowGraph, Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,0,100,0" Grid.Row="0" Grid.Column="5" Height="35" Width="50" HorizontalAlignment="Right" FontSize="20" Command="{Binding GraphToggleClick}" >
+        <buttonsLibrary:ImageButton Image="/Image/list.ico" Visibility="{Binding IsShowGraph, Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,0,80,0" Grid.Row="0" Grid.Column="5" Height="35" Width="50" HorizontalAlignment="Right" FontSize="20" Command="{Binding GraphToggleClick}" >
 
         </buttonsLibrary:ImageButton>
 

@@ -48,6 +48,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>DLLs\LogSystem.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Office.Interop.Word, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -91,12 +94,17 @@
     <Compile Include="Common\AbsoluteValueConverter.cs" />
     <Compile Include="Common\DailyAccountDB.cs" />
     <Compile Include="Common\DecimalConverter.cs" />
+    <Compile Include="Common\GenericEventArgs.cs" />
     <Compile Include="Common\HttpWebRequest.cs" />
     <Compile Include="Common\ItemTypeToColorConverter.cs" />
     <Compile Include="Common\TotalAmountTypeToColorConverter.cs" />
     <Compile Include="Model\DailyModel.cs" />
     <Compile Include="Model\TotalModel.cs" />
+    <Compile Include="ViewModel\CalendarViewModel.cs" />
     <Compile Include="ViewModel\DailyViewModel.cs" />
+    <Compile Include="View\CalendarView.xaml.cs">
+      <DependentUpon>CalendarView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\DailyView.xaml.cs">
       <DependentUpon>DailyView.xaml</DependentUpon>
     </Compile>
@@ -104,6 +112,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\CalendarView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\DailyView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -142,6 +154,9 @@
   <ItemGroup>
     <Resource Include="Image\graph.ico" />
     <Resource Include="Image\list.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Image\printer.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

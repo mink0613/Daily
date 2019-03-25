@@ -14,6 +14,8 @@ namespace Daily.Common
 
         private readonly string getPeriodUrl = "http://modoocoupon.woobi.co.kr/gnuboard4/daily/php/GetPeriodTotalAccount.php";
 
+        private readonly string getPeriodListUrl = "http://modoocoupon.woobi.co.kr/gnuboard4/daily/php/GetPeriodListAccount.php";
+
         public void DeleteDailyAccount(int id)
         {
             string fullUrl = deleteUrl + "?";
@@ -49,6 +51,14 @@ namespace Daily.Common
         public string GetPeriodTotalAccount(string startDate, string endDate)
         {
             string fullUrl = getPeriodUrl + "?";
+            fullUrl += "searchStartDate=" + startDate + "&searchEndDate=" + endDate;
+
+            return Get(fullUrl);
+        }
+
+        public string GetPeriodListAccount(string startDate, string endDate)
+        {
+            string fullUrl = getWeeklyUrl /* getPeriodListUrl */ + "?";
             fullUrl += "searchStartDate=" + startDate + "&searchEndDate=" + endDate;
 
             return Get(fullUrl);

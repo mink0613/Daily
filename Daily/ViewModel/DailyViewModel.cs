@@ -1,14 +1,15 @@
 ﻿using Daily.Common;
 using Daily.Model;
+using Daily.View;
 using LiveCharts;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
 using UILibrary.Base;
 
 namespace Daily.ViewModel
@@ -25,13 +26,13 @@ namespace Daily.ViewModel
     {
         private readonly int _periodStartDate = 16;
 
+        private DailyAccountDB _database;
+
         private ObservableCollection<DailyModel> _itemCollection;
 
         private ObservableCollection<KeyValuePair<string, int>> _graphItemCollection;
 
         private SeriesCollection _graphDataCollection;
-
-        private GraphType _selectedGraphType;
 
         private DailyModel _selectedItem;
 
@@ -54,6 +55,8 @@ namespace Daily.ViewModel
         private ICommand _deleteClick;
 
         private ICommand _addUpdateClick;
+
+        private ICommand _printClick;
 
         private ICommand _clearClick;
 
@@ -223,6 +226,14 @@ namespace Daily.ViewModel
             get
             {
                 return _addUpdateClick;
+            }
+        }
+
+        public ICommand PrintClick
+        {
+            get
+            {
+                return _printClick;
             }
         }
 
@@ -508,6 +519,8 @@ namespace Daily.ViewModel
         {
             _isAddMode = true;
 
+            _database = new DailyAccountDB();
+
             TypeList = new List<ItemType>();
             TypeList.Add(ItemType.Outcome);
             TypeList.Add(ItemType.Income);
@@ -524,7 +537,6 @@ namespace Daily.ViewModel
             _week = 0;
             _selectedDate = DateTime.Today.AddDays(_week * 7);
 
-            _selectedGraphType = GraphType.Daily;
             IsShowGraph = false;
 
             MondayDate = ToStringDate(GetMondayOfWeek(_selectedDate));
@@ -538,6 +550,7 @@ namespace Daily.ViewModel
 
             _deleteClick = new RelayCommand((param) => Delete(), true);
             _addUpdateClick = new RelayCommand((param) => AddUpdate(), true);
+            _printClick = new RelayCommand((param) => Print(), true);
             _clearClick = new RelayCommand((param) => Clear(), true);
             _graphToggleClick = new RelayCommand((param) => GraphToggle(), true);
         }
@@ -601,11 +614,10 @@ namespace Daily.ViewModel
         private void InitializeList()
         {
             // Calculate weekly total account info
-            DailyAccountDB db = new DailyAccountDB();
             string monday = ToStringDate(GetMondayOfWeek(_selectedDate));
             string sunday = ToStringDate(GetSundayOfWeek(_selectedDate));
 
-            string result = db.GetWeeklyAccount(monday, sunday);
+            string result = _database.GetWeeklyAccount(monday, sunday);
 
             try
             {
@@ -628,7 +640,7 @@ namespace Daily.ViewModel
             if (_lastSearchedStartDayofPeriod != startDayofPeriod)
             {
                 DateTime endDayofPeriod = GetEndDayofPeriod(_selectedDate);
-                result = db.GetPeriodTotalAccount(ToStringDate(startDayofPeriod), ToStringDate(endDayofPeriod));
+                result = _database.GetPeriodTotalAccount(ToStringDate(startDayofPeriod), ToStringDate(endDayofPeriod));
                 try
                 {
                     var model = JsonConvert.DeserializeObject<TotalModel>(result);
@@ -647,7 +659,7 @@ namespace Daily.ViewModel
             int month = _selectedDate.Month;
             if (month != _monthSearched)
             {
-                result = db.GetMonthlyTotalAccount(_selectedDate.Year, _selectedDate.Month);
+                result = _database.GetMonthlyTotalAccount(_selectedDate.Year, _selectedDate.Month);
                 try
                 {
                     var model = JsonConvert.DeserializeObject<TotalModel>(result);
@@ -757,6 +769,130 @@ namespace Daily.ViewModel
                     TotalAmount += temp[i].Amount;
                 }
             }
+        }
+
+        private void Print()
+        {
+            CalendarView calendar = new CalendarView();
+            calendar.ViewModel.OKClicked += (s, e) =>
+            {
+                var data = e.EventData;
+
+                var startDate = data.Item1;
+                var endDate = data.Item2;
+
+                if (startDate > endDate)
+                {
+                    var temp = startDate;
+                    startDate = endDate;
+                    endDate = temp;
+                }
+
+                var result = _database.GetPeriodListAccount(ToStringDate(startDate), ToStringDate(endDate));
+                try
+                {
+                    var modelList = JsonConvert.DeserializeObject<List<DailyModel>>(result);
+
+                    if (modelList != null && modelList.Count > 0)
+                    {
+                        Microsoft.Office.Interop.Word.Application word = new Microsoft.Office.Interop.Word.Application();
+                        Microsoft.Office.Interop.Word.Document document = new Microsoft.Office.Interop.Word.Document();
+
+                        Object oMissing = System.Reflection.Missing.Value;
+                        Object oFalse = false;
+
+                        Microsoft.Office.Interop.Word.Paragraph paragraph = document.Content.Paragraphs.Add(ref oMissing);
+                        paragraph.Range.Font.Size = 15;
+
+                        object start = 0;
+                        object end = 0;
+                        object oEndOfDoc = "\\endofdoc";
+                        Microsoft.Office.Interop.Word.Range tableLocation = document.Bookmarks.get_Item(ref oEndOfDoc).Range;
+                        var table = document.Content.Tables.Add(tableLocation, modelList.Count, 4);
+                        table.Range.Font.Size = 15;
+                        table.Borders.InsideLineStyle = Microsoft.Office.Interop.Word.WdLineStyle.wdLineStyleSingle;
+                        table.Borders.OutsideLineStyle = Microsoft.Office.Interop.Word.WdLineStyle.wdLineStyleSingle;
+                        table.AllowAutoFit = true;
+
+                        int row = 1;
+                        foreach (var model in modelList)
+                        {
+                            table.Cell(row, 1).Range.Text = model.Date;
+                            table.Cell(row, 2).Range.Text = model.Type.ToString();
+                            table.Cell(row, 3).Range.Text = model.Name;
+
+                            if (model.Type == ItemType.Outcome)
+                            {
+                                table.Cell(row, 4).Range.Font.Color = Microsoft.Office.Interop.Word.WdColor.wdColorRed;
+                            }
+                            else
+                            {
+                                table.Cell(row, 4).Range.Font.Color = Microsoft.Office.Interop.Word.WdColor.wdColorBlue;
+                            }
+
+                            table.Cell(row, 4).Range.Text = "\\ " + string.Format("{0:###,###,###,###,###,###,###}", model.Amount);
+
+                            row++;
+                        }
+
+                        table.Columns[1].AutoFit();
+                        Single width1 = table.Columns[1].Width;
+                        table.AutoFitBehavior(Microsoft.Office.Interop.Word.WdAutoFitBehavior.wdAutoFitContent); // fill page width
+                        table.Columns[1].SetWidth(width1, Microsoft.Office.Interop.Word.WdRulerStyle.wdAdjustFirstColumn);
+
+                        table.Columns[2].AutoFit();
+                        Single width2 = table.Columns[2].Width;
+                        table.AutoFitBehavior(Microsoft.Office.Interop.Word.WdAutoFitBehavior.wdAutoFitContent); // fill page width
+                        table.Columns[2].SetWidth(width2, Microsoft.Office.Interop.Word.WdRulerStyle.wdAdjustFirstColumn);
+
+                        table.Columns[3].AutoFit();
+                        Single width3 = table.Columns[3].Width;
+                        table.AutoFitBehavior(Microsoft.Office.Interop.Word.WdAutoFitBehavior.wdAutoFitContent); // fill page width
+                        table.Columns[3].SetWidth(width3, Microsoft.Office.Interop.Word.WdRulerStyle.wdAdjustFirstColumn);
+
+                        table.Columns[4].AutoFit();
+                        Single width4 = table.Columns[4].Width;
+                        table.AutoFitBehavior(Microsoft.Office.Interop.Word.WdAutoFitBehavior.wdAutoFitContent); // fill page width
+                        table.Columns[4].SetWidth(width4, Microsoft.Office.Interop.Word.WdRulerStyle.wdAdjustFirstColumn);
+
+                        table.Rows.Alignment = Microsoft.Office.Interop.Word.WdRowAlignment.wdAlignRowCenter;
+
+                        document.PageSetup.Orientation = Microsoft.Office.Interop.Word.WdOrientation.wdOrientLandscape;
+
+                        Object fileName = Directory.GetCurrentDirectory() + "\\" + "Report_" + ToStringDate(startDate) + "_" + ToStringDate(endDate) + ".doc";
+
+                        try
+                        {
+                            document.SaveAs(ref fileName);
+
+                            System.Diagnostics.Process.Start(fileName.ToString());
+
+                            if (word.ActivePrinter != null || word.ActivePrinter != "")
+                            {
+                                document.PrintOut(ref oFalse, ref oMissing, ref oMissing, ref oMissing,
+                                    ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oFalse,
+                                    ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing, ref oMissing);
+                            }
+
+                            document.Close();
+                            word.Quit();
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("File is opened. Please close word file.");
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.ToString());
+                }
+            };
+            calendar.ViewModel.Closing += (s, e) =>
+            {
+                calendar.Close();
+            };
+            calendar.ShowDialog();
         }
 
         private void Clear()
