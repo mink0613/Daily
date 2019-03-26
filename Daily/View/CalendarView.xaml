@@ -26,11 +26,11 @@
             </ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Viewbox Grid.Row="0">
-            <Calendar SelectedDate="{Binding SelectedStartDate}" SelectionMode="SingleDate" SelectedDatesChanged="Calendar_SelectedDatesChanged">
+            <Calendar SelectedDate="{Binding SelectedStartDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayDate="{Binding SelectedStartDate, Mode=OneTime, UpdateSourceTrigger=PropertyChanged}" SelectionMode="SingleDate" SelectedDatesChanged="Calendar_SelectedDatesChanged">
             </Calendar>
         </Viewbox>
         <Viewbox Grid.Row="0" Grid.Column="1">
-            <Calendar SelectedDate="{Binding SelectedEndDate}" SelectionMode="SingleDate" SelectedDatesChanged="Calendar_SelectedDatesChanged">
+            <Calendar SelectedDate="{Binding SelectedEndDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" DisplayDate="{Binding SelectedEndDate, Mode=OneTime, UpdateSourceTrigger=PropertyChanged}" SelectionMode="SingleDate" SelectedDatesChanged="Calendar_SelectedDatesChanged">
             </Calendar>
         </Viewbox>
         <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Center">

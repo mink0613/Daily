@@ -893,6 +893,8 @@ namespace Daily.ViewModel
             {
                 calendar.Close();
             };
+            calendar.ViewModel.SelectedStartDate = GetMondayOfWeek(_selectedDate);
+            calendar.ViewModel.SelectedEndDate = GetSundayOfWeek(_selectedDate);
             calendar.ShowDialog();
         }
 
