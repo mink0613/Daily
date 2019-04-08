@@ -937,6 +937,7 @@ namespace Daily.ViewModel
                 Date = _selectedItem.Date;
                 Name = _selectedItem.Name;
                 Amount = _selectedItem.Amount.ToString();
+                SelectedType = _selectedItem.Type;
             }
         }
 
