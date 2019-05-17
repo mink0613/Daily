@@ -109,7 +109,7 @@
             </DVC:Chart.Series>
         </DVC:Chart>
 
-        <ListView Visibility="{Binding IsShowGraph, Converter={StaticResource BoolToOppositeVisibilityConverter}}" Name="listView" Grid.Row="1" Grid.ColumnSpan="6" ItemsSource="{Binding ItemCollection}" SelectedItem="{Binding SelectedItem}" FontSize="20" HorizontalContentAlignment="Center">
+        <ListView ScrollViewer.HorizontalScrollBarVisibility="Hidden" Visibility="{Binding IsShowGraph, Converter={StaticResource BoolToOppositeVisibilityConverter}}" Name="listView" Grid.Row="1" Grid.ColumnSpan="6" ItemsSource="{Binding ItemCollection}" SelectedItem="{Binding SelectedItem}" FontSize="20" HorizontalContentAlignment="Center">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="지출/소비" Width="150" x:Name="col1">
@@ -119,21 +119,21 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="날짜" Width="250" >
+                    <GridViewColumn Header="날짜" Width="170" x:Name="col2">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock TextAlignment="Center" HorizontalAlignment="Center" Text="{Binding Date}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="항목" Width="370">
+                    <GridViewColumn Header="항목" Width="{Binding ElementName=helperField, Path=ActualWidth}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock TextAlignment="Center" HorizontalAlignment="Center" Text="{Binding Name}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="금액" Width="200" x:Name="AmountTB">
+                    <GridViewColumn Header="금액" Width="130" x:Name="col4">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <TextBlock TextAlignment="Center" x:Name="AmountTextBlock" HorizontalAlignment="Center" Text="{Binding Amount, Converter={StaticResource DecimalConverter}}" Foreground="{Binding Type, Converter={StaticResource ItemTypeToColorConverter}}" />
@@ -144,6 +144,18 @@
             </ListView.View>
         </ListView>
 
+        <!-- THIS GRID IS NOT VISIBLE, BUT IS USE TO RESIZE FOR LISTVIEW GRIDVIEWCOLUMN WIDTH -->
+        <Grid Visibility="Hidden" Grid.Row="1" Grid.ColumnSpan="6" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="{Binding ElementName=col1, Path=ActualWidth}" />
+                <ColumnDefinition Width="{Binding ElementName=col2, Path=ActualWidth}" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="{Binding ElementName=col4, Path=ActualWidth}" />
+                <ColumnDefinition Width="20" /> <!-- FOR VERTICAL SCROLLBAR WIDTH -->
+            </Grid.ColumnDefinitions>
+            <Grid Grid.Column="2" x:Name="helperField" />
+        </Grid>
+        
         <TextBlock Margin="10" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Text="총 수입" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
 
         </TextBlock>
