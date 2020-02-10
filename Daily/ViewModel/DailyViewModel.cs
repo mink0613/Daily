@@ -82,11 +82,17 @@ namespace Daily.ViewModel
 
         private int _totalOutcome;
 
+        private string _totalOutcomeToolTip;
+
         private int _totalAmount;
 
         private int _periodTotalAmount;
 
+        private string _periodTotalAmountToolTip;
+
         private int _monthTotalAmount;
+
+        private string _monthTotalAmountToolTip;
 
         private int _week;
 
@@ -383,6 +389,19 @@ namespace Daily.ViewModel
             }
         }
 
+        public string TotalOutcomeToolTip
+        {
+            get
+            {
+                return _totalOutcomeToolTip;
+            }
+            set
+            {
+                _totalOutcomeToolTip = value;
+                OnPropertyChanged();
+            }
+        }
+
         public int TotalAmount
         {
             get
@@ -418,6 +437,19 @@ namespace Daily.ViewModel
             }
         }
 
+        public string PeriodTotalAmountToolTip
+        {
+            get
+            {
+                return _periodTotalAmountToolTip;
+            }
+            set
+            {
+                _periodTotalAmountToolTip = value;
+                OnPropertyChanged();
+            }
+        }
+
         public int MonthTotalAmount
         {
             get
@@ -427,6 +459,19 @@ namespace Daily.ViewModel
             set
             {
                 _monthTotalAmount = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string MonthTotalAmountToolTip
+        {
+            get
+            {
+                return _monthTotalAmountToolTip;
+            }
+            set
+            {
+                _monthTotalAmountToolTip = value;
                 OnPropertyChanged();
             }
         }
@@ -522,7 +567,9 @@ namespace Daily.ViewModel
             _database = new DailyAccountDB();
 
             TypeList = new List<ItemType>();
-            TypeList.Add(ItemType.Outcome);
+            TypeList.Add(ItemType.OutcomeSamsung);
+            TypeList.Add(ItemType.OutcomeHana);
+            TypeList.Add(ItemType.OutcomeCash);
             TypeList.Add(ItemType.Income);
 
             SelectedType = TypeList[0];
@@ -534,6 +581,9 @@ namespace Daily.ViewModel
             TotalIncome = 0;
             TotalOutcome = 0;
             TotalAmount = 0;
+
+            TotalOutcomeToolTip = string.Format("삼성: {0:n0}\n하나: {1:n0}\n현금: {2:n0}", 0, 0, 0);
+
             _week = 0;
             _selectedDate = DateTime.Today.AddDays(_week * 7);
 
@@ -647,6 +697,9 @@ namespace Daily.ViewModel
                     PeriodTotal = ToStringDateMMDD(startDayofPeriod) + " ~ " + ToStringDateMMDD(endDayofPeriod) + " 지출 총액";
                     PeriodTotalAmount = model.TotalOutcomeAmount;
 
+                    PeriodTotalAmountToolTip = string.Format("삼성: {0:n0}\n하나: {1:n0}\n현금: {2:n0}",
+                        model.TotalOutcomeAmountSamsung, model.TotalOutcomeAmountHana, model.TotalOutcomeAmountCash);
+
                     _lastSearchedStartDayofPeriod = startDayofPeriod;
                 }
                 catch (Exception e)
@@ -665,6 +718,9 @@ namespace Daily.ViewModel
                     var model = JsonConvert.DeserializeObject<TotalModel>(result);
                     MonthTotal = month + " 월 지출 총액";
                     MonthTotalAmount = model.TotalOutcomeAmount;
+
+                    MonthTotalAmountToolTip = string.Format("삼성: {0:n0}\n하나: {1:n0}\n현금: {2:n0}",
+                        model.TotalOutcomeAmountSamsung, model.TotalOutcomeAmountHana, model.TotalOutcomeAmountCash);
 
                     _monthSearched = month;
                 }
@@ -755,13 +811,31 @@ namespace Daily.ViewModel
             TotalOutcome = 0;
             TotalIncome = 0;
 
+            int samsung = 0;
+            int hana = 0;
+            int cash = 0;
+
             for (int i = 0; i < temp.Count; i++)
             {
                 ItemCollection.Add(temp[i]);
-                if (temp[i].Type == ItemType.Outcome)
+                if (temp[i].Type == ItemType.Outcome || temp[i].Type == ItemType.OutcomeSamsung 
+                    || temp[i].Type == ItemType.OutcomeHana || temp[i].Type == ItemType.OutcomeCash)
                 {
                     TotalOutcome += temp[i].Amount;
                     TotalAmount -= temp[i].Amount;
+
+                    if (temp[i].Type == ItemType.Outcome || temp[i].Type == ItemType.OutcomeSamsung)
+                    {
+                        samsung += temp[i].Amount;
+                    }
+                    else if (temp[i].Type == ItemType.OutcomeHana)
+                    {
+                        hana += temp[i].Amount;
+                    }
+                    else if (temp[i].Type == ItemType.OutcomeCash)
+                    {
+                        cash += temp[i].Amount;
+                    }
                 }
                 else
                 {
@@ -769,6 +843,8 @@ namespace Daily.ViewModel
                     TotalAmount += temp[i].Amount;
                 }
             }
+
+            TotalOutcomeToolTip = string.Format("삼성: {0:n0}\n하나: {1:n0}\n현금: {2:n0}", samsung, hana, cash);
         }
 
         private void Print()
@@ -822,7 +898,8 @@ namespace Daily.ViewModel
                             table.Cell(row, 2).Range.Text = model.Type.ToString();
                             table.Cell(row, 3).Range.Text = model.Name;
 
-                            if (model.Type == ItemType.Outcome)
+                            if (model.Type == ItemType.Outcome || model.Type == ItemType.OutcomeSamsung 
+                            || model.Type == ItemType.OutcomeHana || model.Type == ItemType.OutcomeCash)
                             {
                                 table.Cell(row, 4).Range.Font.Color = Microsoft.Office.Interop.Word.WdColor.wdColorRed;
                             }
@@ -915,7 +992,7 @@ namespace Daily.ViewModel
         {
             _isAddMode = true;
 
-            SelectedType = ItemType.Outcome;
+            SelectedType = TypeList[0];
             Date = ToStringDate(_selectedDate);
             Name = "";
             Amount = "";

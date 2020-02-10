@@ -10,6 +10,12 @@ namespace Daily.Model
     {
         private int _totalOutcomeAmount;
 
+        private int _totalOutcomeAmountSamsung;
+
+        private int _totalOutcomeAmountHana;
+
+        private int _totalOutcomeAmountCash;
+
         private int _totalIncomeAmount;
 
         private int _maxOutcomeAmount;
@@ -23,6 +29,42 @@ namespace Daily.Model
             set
             {
                 _totalOutcomeAmount = value;
+            }
+        }
+
+        public int TotalOutcomeAmountSamsung
+        {
+            get
+            {
+                return _totalOutcomeAmountSamsung;
+            }
+            set
+            {
+                _totalOutcomeAmountSamsung = value;
+            }
+        }
+
+        public int TotalOutcomeAmountHana
+        {
+            get
+            {
+                return _totalOutcomeAmountHana;
+            }
+            set
+            {
+                _totalOutcomeAmountHana = value;
+            }
+        }
+
+        public int TotalOutcomeAmountCash
+        {
+            get
+            {
+                return _totalOutcomeAmountCash;
+            }
+            set
+            {
+                _totalOutcomeAmountCash = value;
             }
         }
 

@@ -13,7 +13,7 @@
         xmlns:DVC="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="DailyView" Height="750" Width="1000">
+        Title="Daily V1.0.0" Height="750" Width="1000">
     <Window.Resources>
         <viewmodel:DailyViewModel x:Key="ViewModel" />
         <common:ItemTypeToColorConverter x:Key="ItemTypeToColorConverter" />
@@ -26,6 +26,9 @@
         <converterLibrary:BoolToOppositeVisibilityConverter x:Key="BoolToOppositeVisibilityConverter" />
         <Style TargetType="ListViewItem">
             <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+        <Style x:Key="{x:Type ToolTip}" TargetType="{x:Type ToolTip}">
+            <Setter Property="FontSize" Value="24"/>
         </Style>
     </Window.Resources>
     <Window.DataContext>
@@ -168,7 +171,7 @@
 
         </TextBlock>
 
-        <TextBlock Margin="10" Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="2" Foreground="Red" Text="{Binding TotalOutcome, Converter={StaticResource DecimalConverter}}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Margin="10" Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="2" Foreground="Red" ToolTip="{Binding TotalOutcomeToolTip}" Text="{Binding TotalOutcome, Converter={StaticResource DecimalConverter}}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
 
         </TextBlock>
         
@@ -184,7 +187,7 @@
 
         </TextBlock>
 
-        <TextBlock Margin="10" Grid.Row="4" Grid.Column="2" Foreground="Red" Text="{Binding PeriodTotalAmount, Converter={StaticResource AbsoluteDecimalValueConverter}}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Margin="10" Grid.Row="4" Grid.Column="2" Foreground="Red" ToolTip="{Binding PeriodTotalAmountToolTip}" Text="{Binding PeriodTotalAmount, Converter={StaticResource AbsoluteDecimalValueConverter}}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
 
         </TextBlock>
         
@@ -192,7 +195,7 @@
 
         </TextBlock>
 
-        <TextBlock Margin="10" Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="2" Foreground="Red" Text="{Binding MonthTotalAmount, Converter={StaticResource AbsoluteDecimalValueConverter}}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Margin="10" Grid.Row="4" Grid.Column="4" Grid.ColumnSpan="2" Foreground="Red" ToolTip="{Binding MonthTotalAmountToolTip}" Text="{Binding MonthTotalAmount, Converter={StaticResource AbsoluteDecimalValueConverter}}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
 
         </TextBlock>
 
