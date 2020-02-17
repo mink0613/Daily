@@ -8,63 +8,75 @@ namespace Daily.Model
 {
     class TotalModel
     {
-        private int _totalOutcomeAmount;
+        private int _totalOutgoAmount;
 
-        private int _totalOutcomeAmountSamsung;
+        private int _totalAmountKakao;
 
-        private int _totalOutcomeAmountHana;
+        private int _totalAmountSamsung;
 
-        private int _totalOutcomeAmountCash;
+        private int _totalAmountHana;
+
+        private int _totalAmountCash;
 
         private int _totalIncomeAmount;
 
-        private int _maxOutcomeAmount;
-
-        public int TotalOutcomeAmount
+        public int TotalOutgoAmount
         {
             get
             {
-                return _totalOutcomeAmount;
+                return _totalOutgoAmount;
             }
             set
             {
-                _totalOutcomeAmount = value;
+                _totalOutgoAmount = value;
             }
         }
 
-        public int TotalOutcomeAmountSamsung
+        public int TotalAmountKakao
         {
             get
             {
-                return _totalOutcomeAmountSamsung;
+                return _totalAmountKakao;
             }
             set
             {
-                _totalOutcomeAmountSamsung = value;
+                _totalAmountKakao = value;
             }
         }
 
-        public int TotalOutcomeAmountHana
+        public int TotalAmountSamsung
         {
             get
             {
-                return _totalOutcomeAmountHana;
+                return _totalAmountSamsung;
             }
             set
             {
-                _totalOutcomeAmountHana = value;
+                _totalAmountSamsung = value;
             }
         }
 
-        public int TotalOutcomeAmountCash
+        public int TotalAmountHana
         {
             get
             {
-                return _totalOutcomeAmountCash;
+                return _totalAmountHana;
             }
             set
             {
-                _totalOutcomeAmountCash = value;
+                _totalAmountHana = value;
+            }
+        }
+
+        public int TotalAmountCash
+        {
+            get
+            {
+                return _totalAmountCash;
+            }
+            set
+            {
+                _totalAmountCash = value;
             }
         }
 
@@ -77,18 +89,6 @@ namespace Daily.Model
             set
             {
                 _totalIncomeAmount = value;
-            }
-        }
-
-        public int MaxOutcomeAmount
-        {
-            get
-            {
-                return _maxOutcomeAmount;
-            }
-            set
-            {
-                _maxOutcomeAmount = value;
             }
         }
     }

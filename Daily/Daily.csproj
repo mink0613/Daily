@@ -99,6 +99,7 @@
     <Compile Include="Common\ItemTypeToColorConverter.cs" />
     <Compile Include="Common\TotalAmountTypeToColorConverter.cs" />
     <Compile Include="Model\DailyModel.cs" />
+    <Compile Include="Model\GraphModel.cs" />
     <Compile Include="Model\TotalModel.cs" />
     <Compile Include="ViewModel\CalendarViewModel.cs" />
     <Compile Include="ViewModel\DailyViewModel.cs" />

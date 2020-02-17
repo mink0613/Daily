@@ -13,7 +13,7 @@
         xmlns:DVC="clr-namespace:System.Windows.Controls.DataVisualization.Charting;assembly=System.Windows.Controls.DataVisualization.Toolkit"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
-        Title="Daily V1.0.0" Height="750" Width="1000">
+        Title="Daily V1.1.0" Height="750" Width="1000">
     <Window.Resources>
         <viewmodel:DailyViewModel x:Key="ViewModel" />
         <common:ItemTypeToColorConverter x:Key="ItemTypeToColorConverter" />
@@ -91,9 +91,10 @@
                 </Style>
             </DVC:Chart.LegendStyle>
             <DVC:Chart.Series>
-                <DVC:ColumnSeries ItemsSource="{Binding GraphItemCollection}" IndependentValueBinding="{Binding Path=Key}" DependentValueBinding="{Binding Path=Value}">
+                <DVC:ColumnSeries ItemsSource="{Binding GraphItemCollection}" IndependentValueBinding="{Binding Path=Date}" DependentValueBinding="{Binding Path=Amount}">
                     <DVC:ColumnSeries.DataPointStyle>
                         <Style TargetType="DVC:ColumnDataPoint">
+                            <EventSetter Event="MouseEnter" Handler="DataPoint_MouseEnter" />
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="DVC:ColumnDataPoint">
@@ -171,7 +172,7 @@
 
         </TextBlock>
 
-        <TextBlock Margin="10" Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="2" Foreground="Red" ToolTip="{Binding TotalOutcomeToolTip}" Text="{Binding TotalOutcome, Converter={StaticResource DecimalConverter}}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Margin="10" Grid.Row="2" Grid.Column="4" Grid.ColumnSpan="2" Foreground="Red" ToolTip="{Binding TotalOutgoToolTip}" Text="{Binding TotalOutgo, Converter={StaticResource DecimalConverter}}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
 
         </TextBlock>
         
@@ -179,7 +180,8 @@
             
         </TextBlock>
 
-        <TextBlock Margin="10" Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="2" Foreground="{Binding TotalType, Converter={StaticResource TotalAmountTypeToColorConverter}}" Text="{Binding TotalAmount, Converter={StaticResource AbsoluteDecimalValueConverter}}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
+        <TextBlock Margin="10" Grid.Row="3" Grid.Column="4" Grid.ColumnSpan="2" Foreground="{Binding TotalType, Converter={StaticResource TotalAmountTypeToColorConverter}}" ToolTip="{Binding TotalAmountToolTip}"
+                   Text="{Binding TotalAmount, Converter={StaticResource AbsoluteDecimalValueConverter}}" FontSize="20" TextAlignment="Center" VerticalAlignment="Center">
 
         </TextBlock>
 

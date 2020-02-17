@@ -26,11 +26,13 @@ namespace Daily.ViewModel
     {
         private readonly int _periodStartDate = 16;
 
+        private readonly int _periodEndDate = 15;
+
         private DailyAccountDB _database;
 
         private ObservableCollection<DailyModel> _itemCollection;
 
-        private ObservableCollection<KeyValuePair<string, int>> _graphItemCollection;
+        private ObservableCollection<GraphModel> _graphItemCollection;
 
         private SeriesCollection _graphDataCollection;
 
@@ -80,11 +82,13 @@ namespace Daily.ViewModel
 
         private int _totalIncome;
 
-        private int _totalOutcome;
+        private int _totalOutgo;
 
-        private string _totalOutcomeToolTip;
+        private string _totalOutgoToolTip;
 
         private int _totalAmount;
+
+        private string _totalAmountToolTip;
 
         private int _periodTotalAmount;
 
@@ -115,7 +119,7 @@ namespace Daily.ViewModel
             }
         }
 
-        public ObservableCollection<KeyValuePair<string, int>> GraphItemCollection
+        public ObservableCollection<GraphModel> GraphItemCollection
         {
             get
             {
@@ -376,28 +380,28 @@ namespace Daily.ViewModel
             }
         }
 
-        public int TotalOutcome
+        public int TotalOutgo
         {
             get
             {
-                return _totalOutcome;
+                return _totalOutgo;
             }
             set
             {
-                _totalOutcome = value;
+                _totalOutgo = value;
                 OnPropertyChanged();
             }
         }
 
-        public string TotalOutcomeToolTip
+        public string TotalOutgoToolTip
         {
             get
             {
-                return _totalOutcomeToolTip;
+                return _totalOutgoToolTip;
             }
             set
             {
-                _totalOutcomeToolTip = value;
+                _totalOutgoToolTip = value;
                 OnPropertyChanged();
             }
         }
@@ -420,6 +424,19 @@ namespace Daily.ViewModel
                     TotalType = TotalAmountType.Plus;
                 }
 
+                OnPropertyChanged();
+            }
+        }
+
+        public string TotalAmountToolTip
+        {
+            get
+            {
+                return _totalAmountToolTip;
+            }
+            set
+            {
+                _totalAmountToolTip = value;
                 OnPropertyChanged();
             }
         }
@@ -542,7 +559,7 @@ namespace Daily.ViewModel
 
         private DateTime GetEndDayofPeriod(DateTime date)
         {
-            if (date.Day != _periodStartDate - 1)
+            if (date.Day != _periodEndDate)
             {
                 return GetEndDayofPeriod(date.AddDays(1));
             }
@@ -567,22 +584,24 @@ namespace Daily.ViewModel
             _database = new DailyAccountDB();
 
             TypeList = new List<ItemType>();
-            TypeList.Add(ItemType.OutcomeSamsung);
-            TypeList.Add(ItemType.OutcomeHana);
-            TypeList.Add(ItemType.OutcomeCash);
+            TypeList.Add(ItemType.Kakao);
+            TypeList.Add(ItemType.Samsung);
+            TypeList.Add(ItemType.Hana);
+            TypeList.Add(ItemType.Cash);
             TypeList.Add(ItemType.Income);
 
             SelectedType = TypeList[0];
 
             ItemCollection = new ObservableCollection<DailyModel>();
-            GraphItemCollection = new ObservableCollection<KeyValuePair<string, int>>();
+            GraphItemCollection = new ObservableCollection<GraphModel>();
             GraphDataCollection = new SeriesCollection();
             
             TotalIncome = 0;
-            TotalOutcome = 0;
+            TotalOutgo = 0;
             TotalAmount = 0;
 
-            TotalOutcomeToolTip = string.Format("삼성: {0:n0}\n하나: {1:n0}\n현금: {2:n0}", 0, 0, 0);
+            TotalOutgoToolTip = string.Format("삼성: {0:n0}\n카카오: {1:n0}\n하나: {2:n0}\n현금: {3:n0}", 0, 0, 0, 0);
+            TotalAmountToolTip = string.Format("삼성: {0:n0}\n카카오: {1:n0}\n하나: {2:n0}\n현금: {3:n0}\n\n수입: {4:n0}", 0, 0, 0, 0, 0);
 
             _week = 0;
             _selectedDate = DateTime.Today.AddDays(_week * 7);
@@ -618,10 +637,19 @@ namespace Daily.ViewModel
                 return;
             }
 
-            ObservableCollection<KeyValuePair<string, int>> tempCollection = new ObservableCollection<KeyValuePair<string, int>>();
+            List<GraphModel> tempCollection = new List<GraphModel>();
             GraphDataCollection.Clear();
 
             // Initialize collection
+            tempCollection.Add(new GraphModel(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Monday))));
+            tempCollection.Add(new GraphModel(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Tuesday))));
+            tempCollection.Add(new GraphModel(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Wednesday))));
+            tempCollection.Add(new GraphModel(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Thursday))));
+            tempCollection.Add(new GraphModel(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Friday))));
+            tempCollection.Add(new GraphModel(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Saturday))));
+            tempCollection.Add(new GraphModel(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Sunday))));
+
+            /*
             tempCollection.Add(new KeyValuePair<string, int>(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Monday)), 0));
             tempCollection.Add(new KeyValuePair<string, int>(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Tuesday)), 0));
             tempCollection.Add(new KeyValuePair<string, int>(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Wednesday)), 0));
@@ -629,18 +657,37 @@ namespace Daily.ViewModel
             tempCollection.Add(new KeyValuePair<string, int>(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Friday)), 0));
             tempCollection.Add(new KeyValuePair<string, int>(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Saturday)), 0));
             tempCollection.Add(new KeyValuePair<string, int>(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Sunday)), 0));
+            */
+            for (int i = 0; i < tempCollection.Count; i++)
+            {
+                var itemList = ItemCollection.Where(x => x.Date.Equals(tempCollection[i].Date));
+                if (itemList.Count() == 0)
+                {
+                    continue;
+                }
 
-            for (int i = ItemCollection.Count - 1; i >= 0; i--)
+                foreach (var model in itemList)
+                {
+                    if (model.Type == ItemType.Income)
+                    {
+                        continue;
+                    }
+
+                    tempCollection[i].AddItem(model.Type, model.Amount);
+                }
+            }
+
+            /*for (int i = ItemCollection.Count - 1; i >= 0; i--)
             {
                 if (ItemCollection[i].Type == ItemType.Income)
                 {
                     continue;
                 }
 
-                var itemList = tempCollection.Where(x => x.Key.Equals(ItemCollection[i].Date));
+                var itemList = tempCollection.Where(x => x.Date.Equals(ItemCollection[i].Date));
                 if (itemList.Count() == 0)
                 {
-                    tempCollection.Add(new KeyValuePair<string, int>(ItemCollection[i].Date, ItemCollection[i].Amount));
+                    tempCollection.Add(new GraphModel(ItemCollection[i].Date));
                 }
                 else
                 {
@@ -650,11 +697,11 @@ namespace Daily.ViewModel
                     tempCollection.Remove(item);
                     tempCollection.Add(newItem);
                 }
-            }
+            }*/
 
             // Save to GraphItemCollection
             GraphItemCollection.Clear();
-            var sortedCollection = tempCollection.OrderBy(x => x.Key);
+            var sortedCollection = tempCollection.OrderBy(x => x.Date);
             for (int i = 0; i < sortedCollection.Count(); i++)
             {
                 GraphItemCollection.Add(sortedCollection.ElementAt(i));
@@ -695,10 +742,12 @@ namespace Daily.ViewModel
                 {
                     var model = JsonConvert.DeserializeObject<TotalModel>(result);
                     PeriodTotal = ToStringDateMMDD(startDayofPeriod) + " ~ " + ToStringDateMMDD(endDayofPeriod) + " 지출 총액";
-                    PeriodTotalAmount = model.TotalOutcomeAmount;
+                    PeriodTotalAmount = model.TotalOutgoAmount + model.TotalAmountSamsung + 
+                        model.TotalAmountKakao + model.TotalAmountHana + model.TotalAmountCash;
 
-                    PeriodTotalAmountToolTip = string.Format("삼성: {0:n0}\n하나: {1:n0}\n현금: {2:n0}",
-                        model.TotalOutcomeAmountSamsung, model.TotalOutcomeAmountHana, model.TotalOutcomeAmountCash);
+                    PeriodTotalAmountToolTip = string.Format("삼성: {0:n0}\n카카오: {1:n0}\n하나: {2:n0}\n현금: {3:n0}\n\n수입: {4:n0}",
+                        model.TotalAmountSamsung + model.TotalOutgoAmount, model.TotalAmountKakao, 
+                        model.TotalAmountHana, model.TotalAmountCash, model.TotalIncomeAmount);
 
                     _lastSearchedStartDayofPeriod = startDayofPeriod;
                 }
@@ -717,10 +766,12 @@ namespace Daily.ViewModel
                 {
                     var model = JsonConvert.DeserializeObject<TotalModel>(result);
                     MonthTotal = month + " 월 지출 총액";
-                    MonthTotalAmount = model.TotalOutcomeAmount;
+                    MonthTotalAmount = model.TotalOutgoAmount + model.TotalAmountSamsung +
+                        model.TotalAmountKakao + model.TotalAmountHana + model.TotalAmountCash;
 
-                    MonthTotalAmountToolTip = string.Format("삼성: {0:n0}\n하나: {1:n0}\n현금: {2:n0}",
-                        model.TotalOutcomeAmountSamsung, model.TotalOutcomeAmountHana, model.TotalOutcomeAmountCash);
+                    MonthTotalAmountToolTip = string.Format("삼성: {0:n0}\n카카오: {1:n0}\n하나: {2:n0}\n현금: {3:n0}\n\n수입: {4:n0}",
+                        model.TotalAmountSamsung + model.TotalOutgoAmount, model.TotalAmountKakao,
+                        model.TotalAmountHana, model.TotalAmountCash, model.TotalIncomeAmount);
 
                     _monthSearched = month;
                 }
@@ -808,9 +859,10 @@ namespace Daily.ViewModel
             ObservableCollection<DailyModel> temp = new ObservableCollection<DailyModel>(ItemCollection.OrderByDescending(x => x.Date));
             ItemCollection.Clear();
             TotalAmount = 0;
-            TotalOutcome = 0;
+            TotalOutgo = 0;
             TotalIncome = 0;
 
+            int kakao = 0;
             int samsung = 0;
             int hana = 0;
             int cash = 0;
@@ -818,21 +870,26 @@ namespace Daily.ViewModel
             for (int i = 0; i < temp.Count; i++)
             {
                 ItemCollection.Add(temp[i]);
-                if (temp[i].Type == ItemType.Outcome || temp[i].Type == ItemType.OutcomeSamsung 
-                    || temp[i].Type == ItemType.OutcomeHana || temp[i].Type == ItemType.OutcomeCash)
+                if (temp[i].Type == ItemType.Outgo || temp[i].Type == ItemType.Kakao 
+                    || temp[i].Type == ItemType.Samsung
+                    || temp[i].Type == ItemType.Hana || temp[i].Type == ItemType.Cash)
                 {
-                    TotalOutcome += temp[i].Amount;
+                    TotalOutgo += temp[i].Amount;
                     TotalAmount -= temp[i].Amount;
 
-                    if (temp[i].Type == ItemType.Outcome || temp[i].Type == ItemType.OutcomeSamsung)
+                    if (temp[i].Type == ItemType.Outgo || temp[i].Type == ItemType.Samsung)
                     {
                         samsung += temp[i].Amount;
                     }
-                    else if (temp[i].Type == ItemType.OutcomeHana)
+                    else if (temp[i].Type == ItemType.Kakao)
+                    {
+                        kakao += temp[i].Amount;
+                    }
+                    else if (temp[i].Type == ItemType.Hana)
                     {
                         hana += temp[i].Amount;
                     }
-                    else if (temp[i].Type == ItemType.OutcomeCash)
+                    else if (temp[i].Type == ItemType.Cash)
                     {
                         cash += temp[i].Amount;
                     }
@@ -844,7 +901,8 @@ namespace Daily.ViewModel
                 }
             }
 
-            TotalOutcomeToolTip = string.Format("삼성: {0:n0}\n하나: {1:n0}\n현금: {2:n0}", samsung, hana, cash);
+            TotalOutgoToolTip = string.Format("삼성: {0:n0}\n카카오: {1:n0}\n하나: {2:n0}\n현금: {3:n0}", samsung, kakao, hana, cash);
+            TotalAmountToolTip = string.Format("삼성: {0:n0}\n카카오: {1:n0}\n하나: {2:n0}\n현금: {3:n0}\n\n수입: {4:n0}", samsung, kakao, hana, cash, TotalIncome);
         }
 
         private void Print()
@@ -898,8 +956,9 @@ namespace Daily.ViewModel
                             table.Cell(row, 2).Range.Text = model.Type.ToString();
                             table.Cell(row, 3).Range.Text = model.Name;
 
-                            if (model.Type == ItemType.Outcome || model.Type == ItemType.OutcomeSamsung 
-                            || model.Type == ItemType.OutcomeHana || model.Type == ItemType.OutcomeCash)
+                            if (model.Type == ItemType.Outgo || model.Type == ItemType.Kakao
+                            || model.Type == ItemType.Samsung
+                            || model.Type == ItemType.Hana || model.Type == ItemType.Cash)
                             {
                                 table.Cell(row, 4).Range.Font.Color = Microsoft.Office.Interop.Word.WdColor.wdColorRed;
                             }

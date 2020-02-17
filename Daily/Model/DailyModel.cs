@@ -5,10 +5,11 @@ namespace Daily.Model
 {
     public enum ItemType
     {
-        Outcome,
-        OutcomeSamsung,
-        OutcomeHana,
-        OutcomeCash,
+        Outgo,
+        Kakao,
+        Samsung,
+        Hana,
+        Cash,
         Income
     }
 

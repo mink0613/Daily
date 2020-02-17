@@ -1,6 +1,7 @@
 ﻿using Daily.ViewModel;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Controls.DataVisualization.Charting;
 using System.Windows.Media;
 
 namespace Daily.View
@@ -88,6 +89,25 @@ namespace Daily.View
             else
             {
                 ItemBox.Foreground = Brushes.Black;
+            }
+        }
+
+        private void DataPoint_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            var column = sender as ColumnDataPoint;
+            if (column == null)
+            {
+                return;
+            }
+
+
+            string date = column.IndependentValue.ToString();
+            foreach (var item in ViewModel.GraphItemCollection)
+            {
+                if (item.Date.Equals(date))
+                {
+                    column.ToolTip = item.ToolTipStr;
+                }
             }
         }
     }
