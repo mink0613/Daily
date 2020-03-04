@@ -16,6 +16,8 @@ namespace Daily.Model
 
         private int _totalAmountHana;
 
+        private int _totalAmountHyundai;
+
         private int _totalAmountCash;
 
         private int _totalIncomeAmount;
@@ -65,6 +67,18 @@ namespace Daily.Model
             set
             {
                 _totalAmountHana = value;
+            }
+        }
+
+        public int TotalAmountHyundai
+        {
+            get
+            {
+                return _totalAmountHyundai;
+            }
+            set
+            {
+                _totalAmountHyundai = value;
             }
         }
 

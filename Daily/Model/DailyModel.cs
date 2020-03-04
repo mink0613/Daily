@@ -9,6 +9,7 @@ namespace Daily.Model
         Kakao,
         Samsung,
         Hana,
+        Hyundai,
         Cash,
         Income
     }

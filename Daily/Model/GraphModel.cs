@@ -60,6 +60,12 @@ namespace Daily.Model
                     toolTip += string.Format("하나: {0:n0}\n", GetTotalAmount(hana));
                 }
 
+                var hyundai = _itemList.Where(x => x.Key == ItemType.Hyundai).ToList();
+                if (hyundai != null && hyundai.Count > 0)
+                {
+                    toolTip += string.Format("현대: {0:n0}\n", GetTotalAmount(hyundai));
+                }
+
                 var cash = _itemList.Where(x => x.Key == ItemType.Cash).ToList();
                 if (cash != null && cash.Count > 0)
                 {

@@ -587,6 +587,7 @@ namespace Daily.ViewModel
             TypeList.Add(ItemType.Kakao);
             TypeList.Add(ItemType.Samsung);
             TypeList.Add(ItemType.Hana);
+            TypeList.Add(ItemType.Hyundai);
             TypeList.Add(ItemType.Cash);
             TypeList.Add(ItemType.Income);
 
@@ -600,8 +601,8 @@ namespace Daily.ViewModel
             TotalOutgo = 0;
             TotalAmount = 0;
 
-            TotalOutgoToolTip = string.Format("삼성: {0:n0}\n카카오: {1:n0}\n하나: {2:n0}\n현금: {3:n0}", 0, 0, 0, 0);
-            TotalAmountToolTip = string.Format("삼성: {0:n0}\n카카오: {1:n0}\n하나: {2:n0}\n현금: {3:n0}\n\n수입: {4:n0}", 0, 0, 0, 0, 0);
+            TotalOutgoToolTip = string.Format("삼성: {0:n0}\n카카오: {1:n0}\n하나: {2:n0}\n현대: {3:n0}\n현금: {4:n0}", 0, 0, 0, 0, 0);
+            TotalAmountToolTip = string.Format("삼성: {0:n0}\n카카오: {1:n0}\n하나: {2:n0}\n현대: {3:n0}\n현금: {4:n0}\n\n수입: {5:n0}", 0, 0, 0, 0, 0, 0);
 
             _week = 0;
             _selectedDate = DateTime.Today.AddDays(_week * 7);
@@ -745,9 +746,9 @@ namespace Daily.ViewModel
                     PeriodTotalAmount = model.TotalOutgoAmount + model.TotalAmountSamsung + 
                         model.TotalAmountKakao + model.TotalAmountHana + model.TotalAmountCash;
 
-                    PeriodTotalAmountToolTip = string.Format("삼성: {0:n0}\n카카오: {1:n0}\n하나: {2:n0}\n현금: {3:n0}\n\n수입: {4:n0}",
+                    PeriodTotalAmountToolTip = string.Format("삼성: {0:n0}\n카카오: {1:n0}\n하나: {2:n0}\n현대: {3:n0}\n현금: {4:n0}\n\n수입: {5:n0}",
                         model.TotalAmountSamsung + model.TotalOutgoAmount, model.TotalAmountKakao, 
-                        model.TotalAmountHana, model.TotalAmountCash, model.TotalIncomeAmount);
+                        model.TotalAmountHana, model.TotalAmountHyundai, model.TotalAmountCash, model.TotalIncomeAmount);
 
                     _lastSearchedStartDayofPeriod = startDayofPeriod;
                 }
@@ -769,9 +770,9 @@ namespace Daily.ViewModel
                     MonthTotalAmount = model.TotalOutgoAmount + model.TotalAmountSamsung +
                         model.TotalAmountKakao + model.TotalAmountHana + model.TotalAmountCash;
 
-                    MonthTotalAmountToolTip = string.Format("삼성: {0:n0}\n카카오: {1:n0}\n하나: {2:n0}\n현금: {3:n0}\n\n수입: {4:n0}",
+                    MonthTotalAmountToolTip = string.Format("삼성: {0:n0}\n카카오: {1:n0}\n하나: {2:n0}\n현대: {3:n0}\n현금: {4:n0}\n\n수입: {5:n0}",
                         model.TotalAmountSamsung + model.TotalOutgoAmount, model.TotalAmountKakao,
-                        model.TotalAmountHana, model.TotalAmountCash, model.TotalIncomeAmount);
+                        model.TotalAmountHana, model.TotalAmountHyundai, model.TotalAmountCash, model.TotalIncomeAmount);
 
                     _monthSearched = month;
                 }
@@ -865,14 +866,15 @@ namespace Daily.ViewModel
             int kakao = 0;
             int samsung = 0;
             int hana = 0;
+            int hyundai = 0;
             int cash = 0;
 
             for (int i = 0; i < temp.Count; i++)
             {
                 ItemCollection.Add(temp[i]);
                 if (temp[i].Type == ItemType.Outgo || temp[i].Type == ItemType.Kakao 
-                    || temp[i].Type == ItemType.Samsung
-                    || temp[i].Type == ItemType.Hana || temp[i].Type == ItemType.Cash)
+                    || temp[i].Type == ItemType.Samsung || temp[i].Type == ItemType.Hana
+                    || temp[i].Type == ItemType.Hyundai || temp[i].Type == ItemType.Cash)
                 {
                     TotalOutgo += temp[i].Amount;
                     TotalAmount -= temp[i].Amount;
@@ -889,6 +891,10 @@ namespace Daily.ViewModel
                     {
                         hana += temp[i].Amount;
                     }
+                    else if (temp[i].Type == ItemType.Hyundai)
+                    {
+                        hyundai += temp[i].Amount;
+                    }
                     else if (temp[i].Type == ItemType.Cash)
                     {
                         cash += temp[i].Amount;
@@ -901,8 +907,8 @@ namespace Daily.ViewModel
                 }
             }
 
-            TotalOutgoToolTip = string.Format("삼성: {0:n0}\n카카오: {1:n0}\n하나: {2:n0}\n현금: {3:n0}", samsung, kakao, hana, cash);
-            TotalAmountToolTip = string.Format("삼성: {0:n0}\n카카오: {1:n0}\n하나: {2:n0}\n현금: {3:n0}\n\n수입: {4:n0}", samsung, kakao, hana, cash, TotalIncome);
+            TotalOutgoToolTip = string.Format("삼성: {0:n0}\n카카오: {1:n0}\n하나: {2:n0}\n현대: {3:n0}\n현금: {4:n0}", samsung, kakao, hana, hyundai, cash);
+            TotalAmountToolTip = string.Format("삼성: {0:n0}\n카카오: {1:n0}\n하나: {2:n0}\n현대: {3:n0}\n현금: {4:n0}\n\n수입: {5:n0}", samsung, kakao, hana, hyundai, cash, TotalIncome);
         }
 
         private void Print()
@@ -957,8 +963,8 @@ namespace Daily.ViewModel
                             table.Cell(row, 3).Range.Text = model.Name;
 
                             if (model.Type == ItemType.Outgo || model.Type == ItemType.Kakao
-                            || model.Type == ItemType.Samsung
-                            || model.Type == ItemType.Hana || model.Type == ItemType.Cash)
+                            || model.Type == ItemType.Samsung || model.Type == ItemType.Hana
+                            || model.Type == ItemType.Hyundai || model.Type == ItemType.Cash)
                             {
                                 table.Cell(row, 4).Range.Font.Color = Microsoft.Office.Interop.Word.WdColor.wdColorRed;
                             }
