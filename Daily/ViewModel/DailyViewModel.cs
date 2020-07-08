@@ -24,10 +24,6 @@ namespace Daily.ViewModel
 
     public class DailyViewModel : BaseViewModel
     {
-        private readonly int _periodStartDate = 16;
-
-        private readonly int _periodEndDate = 15;
-
         private DailyAccountDB _database;
 
         private ObservableCollection<DailyModel> _itemCollection;
@@ -506,77 +502,6 @@ namespace Daily.ViewModel
             }
         }
 
-        private DateTime GetDayOfWeek(DateTime date, DayOfWeek day)
-        {
-            if (date.DayOfWeek < day)
-            {
-                return GetDayOfWeek(date.AddDays(1), day);
-            }
-            else if (date.DayOfWeek > day)
-            {
-                // Let Sunday be the last day of week
-                if (day == DayOfWeek.Sunday)
-                {
-                    return GetDayOfWeek(date.AddDays(1), day);
-                }
-                else
-                {
-                    return GetDayOfWeek(date.AddDays(-1), day);
-                }
-            }
-            return date;
-        }
-
-        private DateTime GetMondayOfWeek(DateTime date)
-        {
-            if (date.DayOfWeek != DayOfWeek.Monday)
-            {
-                return GetMondayOfWeek(date.AddDays(-1));
-            }
-
-            return date;
-        }
-
-        private DateTime GetSundayOfWeek(DateTime date)
-        {
-            if (date.DayOfWeek != DayOfWeek.Sunday)
-            {
-                return GetSundayOfWeek(date.AddDays(1));
-            }
-
-            return date;
-        }
-
-        private DateTime GetStartDayofPeriod(DateTime date)
-        {
-            if (date.Day != _periodStartDate)
-            {
-                return GetStartDayofPeriod(date.AddDays(-1));
-            }
-
-            return date;
-        }
-
-        private DateTime GetEndDayofPeriod(DateTime date)
-        {
-            if (date.Day != _periodEndDate)
-            {
-                return GetEndDayofPeriod(date.AddDays(1));
-            }
-
-            return date;
-        }
-
-        private string ToStringDate(DateTime date)
-        {
-            return date.ToString("yyyy-MM-dd");
-        }
-
-        private string ToStringDateMMDD(DateTime date)
-        {
-            return date.ToString("MM-dd");
-        }
-
         private void Initialize()
         {
             _isAddMode = true;
@@ -609,8 +534,8 @@ namespace Daily.ViewModel
 
             IsShowGraph = false;
 
-            MondayDate = ToStringDate(GetMondayOfWeek(_selectedDate));
-            SundayDate = ToStringDate(GetSundayOfWeek(_selectedDate));
+            MondayDate = DateHelper.ToStringDate(DateHelper.GetMondayOfWeek(_selectedDate));
+            SundayDate = DateHelper.ToStringDate(DateHelper.GetSundayOfWeek(_selectedDate));
 
             Refresh();
 
@@ -642,23 +567,14 @@ namespace Daily.ViewModel
             GraphDataCollection.Clear();
 
             // Initialize collection
-            tempCollection.Add(new GraphModel(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Monday))));
-            tempCollection.Add(new GraphModel(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Tuesday))));
-            tempCollection.Add(new GraphModel(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Wednesday))));
-            tempCollection.Add(new GraphModel(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Thursday))));
-            tempCollection.Add(new GraphModel(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Friday))));
-            tempCollection.Add(new GraphModel(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Saturday))));
-            tempCollection.Add(new GraphModel(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Sunday))));
+            tempCollection.Add(new GraphModel(DateHelper.ToStringDate(DateHelper.GetDayOfWeek(_selectedDate, DayOfWeek.Monday))));
+            tempCollection.Add(new GraphModel(DateHelper.ToStringDate(DateHelper.GetDayOfWeek(_selectedDate, DayOfWeek.Tuesday))));
+            tempCollection.Add(new GraphModel(DateHelper.ToStringDate(DateHelper.GetDayOfWeek(_selectedDate, DayOfWeek.Wednesday))));
+            tempCollection.Add(new GraphModel(DateHelper.ToStringDate(DateHelper.GetDayOfWeek(_selectedDate, DayOfWeek.Thursday))));
+            tempCollection.Add(new GraphModel(DateHelper.ToStringDate(DateHelper.GetDayOfWeek(_selectedDate, DayOfWeek.Friday))));
+            tempCollection.Add(new GraphModel(DateHelper.ToStringDate(DateHelper.GetDayOfWeek(_selectedDate, DayOfWeek.Saturday))));
+            tempCollection.Add(new GraphModel(DateHelper.ToStringDate(DateHelper.GetDayOfWeek(_selectedDate, DayOfWeek.Sunday))));
 
-            /*
-            tempCollection.Add(new KeyValuePair<string, int>(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Monday)), 0));
-            tempCollection.Add(new KeyValuePair<string, int>(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Tuesday)), 0));
-            tempCollection.Add(new KeyValuePair<string, int>(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Wednesday)), 0));
-            tempCollection.Add(new KeyValuePair<string, int>(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Thursday)), 0));
-            tempCollection.Add(new KeyValuePair<string, int>(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Friday)), 0));
-            tempCollection.Add(new KeyValuePair<string, int>(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Saturday)), 0));
-            tempCollection.Add(new KeyValuePair<string, int>(ToStringDate(GetDayOfWeek(_selectedDate, DayOfWeek.Sunday)), 0));
-            */
             for (int i = 0; i < tempCollection.Count; i++)
             {
                 var itemList = ItemCollection.Where(x => x.Date.Equals(tempCollection[i].Date));
@@ -678,28 +594,6 @@ namespace Daily.ViewModel
                 }
             }
 
-            /*for (int i = ItemCollection.Count - 1; i >= 0; i--)
-            {
-                if (ItemCollection[i].Type == ItemType.Income)
-                {
-                    continue;
-                }
-
-                var itemList = tempCollection.Where(x => x.Date.Equals(ItemCollection[i].Date));
-                if (itemList.Count() == 0)
-                {
-                    tempCollection.Add(new GraphModel(ItemCollection[i].Date));
-                }
-                else
-                {
-                    var item = itemList.First();
-                    KeyValuePair<string, int> newItem = new KeyValuePair<string, int>(item.Key, item.Value + ItemCollection[i].Amount);
-
-                    tempCollection.Remove(item);
-                    tempCollection.Add(newItem);
-                }
-            }*/
-
             // Save to GraphItemCollection
             GraphItemCollection.Clear();
             var sortedCollection = tempCollection.OrderBy(x => x.Date);
@@ -712,8 +606,8 @@ namespace Daily.ViewModel
         private void InitializeList()
         {
             // Calculate weekly total account info
-            string monday = ToStringDate(GetMondayOfWeek(_selectedDate));
-            string sunday = ToStringDate(GetSundayOfWeek(_selectedDate));
+            string monday = DateHelper.ToStringDate(DateHelper.GetMondayOfWeek(_selectedDate));
+            string sunday = DateHelper.ToStringDate(DateHelper.GetSundayOfWeek(_selectedDate));
 
             string result = _database.GetWeeklyAccount(monday, sunday);
 
@@ -734,15 +628,15 @@ namespace Daily.ViewModel
             }
 
             // Calculate period total account info
-            DateTime startDayofPeriod = GetStartDayofPeriod(_selectedDate);
+            DateTime startDayofPeriod = DateHelper.GetStartDayofPeriod(_selectedDate);
             if (_lastSearchedStartDayofPeriod != startDayofPeriod)
             {
-                DateTime endDayofPeriod = GetEndDayofPeriod(_selectedDate);
-                result = _database.GetPeriodTotalAccount(ToStringDate(startDayofPeriod), ToStringDate(endDayofPeriod));
+                DateTime endDayofPeriod = DateHelper.GetEndDayofPeriod(_selectedDate);
+                result = _database.GetPeriodTotalAccount(DateHelper.ToStringDate(startDayofPeriod), DateHelper.ToStringDate(endDayofPeriod));
                 try
                 {
                     var model = JsonConvert.DeserializeObject<TotalModel>(result);
-                    PeriodTotal = ToStringDateMMDD(startDayofPeriod) + " ~ " + ToStringDateMMDD(endDayofPeriod) + " 지출 총액";
+                    PeriodTotal = DateHelper.ToStringDateMMDD(startDayofPeriod) + " ~ " + DateHelper.ToStringDateMMDD(endDayofPeriod) + " 지출 총액";
                     PeriodTotalAmount = model.TotalOutgoAmount + model.TotalAmountSamsung + 
                         model.TotalAmountKakao + model.TotalAmountHana + model.TotalAmountCash;
 
@@ -795,8 +689,8 @@ namespace Daily.ViewModel
         {
             _week--;
             _selectedDate = DateTime.Today.AddDays(_week * 7);
-            MondayDate = ToStringDate(GetMondayOfWeek(_selectedDate));
-            SundayDate = ToStringDate(GetSundayOfWeek(_selectedDate));
+            MondayDate = DateHelper.ToStringDate(DateHelper.GetMondayOfWeek(_selectedDate));
+            SundayDate = DateHelper.ToStringDate(DateHelper.GetSundayOfWeek(_selectedDate));
             Refresh();
         }
 
@@ -804,8 +698,8 @@ namespace Daily.ViewModel
         {
             _week++;
             _selectedDate = DateTime.Today.AddDays(_week * 7);
-            MondayDate = ToStringDate(GetMondayOfWeek(_selectedDate));
-            SundayDate = ToStringDate(GetSundayOfWeek(_selectedDate));
+            MondayDate = DateHelper.ToStringDate(DateHelper.GetMondayOfWeek(_selectedDate));
+            SundayDate = DateHelper.ToStringDate(DateHelper.GetSundayOfWeek(_selectedDate));
             Refresh();
         }
 
@@ -913,6 +807,10 @@ namespace Daily.ViewModel
 
         private void Print()
         {
+            AnalyzeView analyzeView = new AnalyzeView();
+            analyzeView.Show();
+
+            return;
             CalendarView calendar = new CalendarView();
             calendar.ViewModel.OKClicked += (s, e) =>
             {
@@ -928,7 +826,7 @@ namespace Daily.ViewModel
                     endDate = temp;
                 }
 
-                var result = _database.GetPeriodListAccount(ToStringDate(startDate), ToStringDate(endDate));
+                var result = _database.GetPeriodListAccount(DateHelper.ToStringDate(startDate), DateHelper.ToStringDate(endDate));
                 try
                 {
                     var modelList = JsonConvert.DeserializeObject<List<DailyModel>>(result);
@@ -1002,7 +900,7 @@ namespace Daily.ViewModel
 
                         document.PageSetup.Orientation = Microsoft.Office.Interop.Word.WdOrientation.wdOrientLandscape;
 
-                        Object fileName = Directory.GetCurrentDirectory() + "\\" + "Report_" + ToStringDate(startDate) + "_" + ToStringDate(endDate) + ".doc";
+                        Object fileName = Directory.GetCurrentDirectory() + "\\" + "Report_" + DateHelper.ToStringDate(startDate) + "_" + DateHelper.ToStringDate(endDate) + ".doc";
 
                         try
                         {
@@ -1035,8 +933,8 @@ namespace Daily.ViewModel
             {
                 calendar.Close();
             };
-            calendar.ViewModel.SelectedStartDate = GetMondayOfWeek(_selectedDate);
-            calendar.ViewModel.SelectedEndDate = GetSundayOfWeek(_selectedDate);
+            calendar.ViewModel.SelectedStartDate = DateHelper.GetMondayOfWeek(_selectedDate);
+            calendar.ViewModel.SelectedEndDate = DateHelper.GetSundayOfWeek(_selectedDate);
             calendar.ShowDialog();
         }
 
@@ -1058,7 +956,7 @@ namespace Daily.ViewModel
             _isAddMode = true;
 
             SelectedType = TypeList[0];
-            Date = ToStringDate(_selectedDate);
+            Date = DateHelper.ToStringDate(_selectedDate);
             Name = "";
             Amount = "";
         }
@@ -1089,7 +987,7 @@ namespace Daily.ViewModel
             int digits = 0;
             if (int.TryParse(dateDigitOnly, out digits) == false || dateDigitOnly.Length != 8)
             {
-                Date = ToStringDate(_selectedDate);
+                Date = DateHelper.ToStringDate(_selectedDate);
             }
         }
 

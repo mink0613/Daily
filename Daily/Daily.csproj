@@ -93,16 +93,24 @@
     <Compile Include="Common\AbsoluteDecimalValueConverter.cs" />
     <Compile Include="Common\AbsoluteValueConverter.cs" />
     <Compile Include="Common\DailyAccountDB.cs" />
+    <Compile Include="Common\DateHelper.cs" />
     <Compile Include="Common\DecimalConverter.cs" />
     <Compile Include="Common\GenericEventArgs.cs" />
     <Compile Include="Common\HttpWebRequest.cs" />
     <Compile Include="Common\ItemTypeToColorConverter.cs" />
+    <Compile Include="Common\PieDataPoint.cs" />
     <Compile Include="Common\TotalAmountTypeToColorConverter.cs" />
+    <Compile Include="Model\AnalyzeCategoryModel.cs" />
+    <Compile Include="Model\AnalyzeModel.cs" />
     <Compile Include="Model\DailyModel.cs" />
     <Compile Include="Model\GraphModel.cs" />
     <Compile Include="Model\TotalModel.cs" />
+    <Compile Include="ViewModel\AnalyzeViewModel.cs" />
     <Compile Include="ViewModel\CalendarViewModel.cs" />
     <Compile Include="ViewModel\DailyViewModel.cs" />
+    <Compile Include="View\AnalyzeView.xaml.cs">
+      <DependentUpon>AnalyzeView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\CalendarView.xaml.cs">
       <DependentUpon>CalendarView.xaml</DependentUpon>
     </Compile>
@@ -113,6 +121,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="View\AnalyzeView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\CalendarView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
